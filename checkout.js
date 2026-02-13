@@ -213,7 +213,7 @@
   }
 
   function updateParcelasOptions() {
-    const select = document.getElementById('checkout-parcelas');
+    var select = document.getElementById('checkout-parcelas');
     if (!select) return;
     const items = getCart();
     const cardSubtotal = getCardSubtotal(items);
@@ -224,9 +224,9 @@
     const cardTotal = Math.max(0, cardSubtotal + quadrosTotal - couponDiscount + shipping);
     const minParcel = cardTotal * 0.2;
     const maxParcelas = minParcel > 0 ? Math.min(12, Math.floor(cardTotal / minParcel)) : 1;
-    const numParcelas = Math.max(1, isNaN(maxParcelas) ? 1 : maxParcelas);
-    select.innerHTML = '';
-    for (let n = 1; n <= numParcelas; n++) {
+    var numParcelas = Math.max(1, isNaN(maxParcelas) ? 1 : maxParcelas);
+    select.replaceChildren();
+    for (var n = 1; n <= numParcelas; n++) {
       const valor = cardTotal / n;
       const opt = document.createElement('option');
       opt.value = n;
@@ -236,33 +236,14 @@
   }
 
   function renderShippingMethods() {
-    const placeholder = document.getElementById('checkout-shipping-placeholder');
+    var placeholderText = document.getElementById('checkout-shipping-placeholder-text');
+    var methodsEl = document.getElementById('shippingMethods');
+    var placeholder = document.getElementById('checkout-shipping-placeholder');
     if (!placeholder) return;
     placeholder.classList.add('checkout-form__shipping-placeholder--loaded');
-    placeholder.innerHTML = `
-      <div class="checkout-form__shipping-methods">
-        <label class="checkout-form__shipping-option">
-          <input type="radio" name="shipping" value="express">
-          <span class="checkout-form__shipping-label">
-            <strong>Entrega Expressa</strong>
-            <span class="checkout-form__shipping-days">1 à 3 dias úteis</span>
-          </span>
-          <span class="checkout-form__shipping-price">R$ 19,90</span>
-        </label>
-        <label class="checkout-form__shipping-option">
-          <input type="radio" name="shipping" value="free" checked>
-          <span class="checkout-form__shipping-label">
-            <strong>Entrega Grátis</strong>
-            <span class="checkout-form__shipping-days">3 à 5 dias úteis</span>
-          </span>
-          <span class="checkout-form__shipping-price checkout-form__shipping-price--free">Grátis</span>
-        </label>
-      </div>
-    `;
+    if (placeholderText) placeholderText.hidden = true;
+    if (methodsEl) methodsEl.hidden = false;
     updateCheckoutShippingAndTotal();
-    placeholder.querySelectorAll('input[name="shipping"]').forEach(radio => {
-      radio.addEventListener('change', updateCheckoutShippingAndTotal);
-    });
   }
 
   function maskPhone(input) {
@@ -357,17 +338,59 @@
     renderSummary(items);
     updateParcelasOptions();
 
-    const form = document.getElementById('checkout-form');
+    var formCustomer = document.getElementById('formCustomer');
+    var formShipping = document.getElementById('formShipping');
 
-    /** Restaura placeholders em Nome, Sobrenome e Nome no cartão quando algo (ex.: pixel/autocomplete) esvazia o campo e esconde o placeholder. */
+    /** [DEBUG] Instrumentação: MutationObserver + value setter para identificar o que altera inputs do cliente após CEP/frete */
+    (function () {
+      window.__cepFetchDone = false;
+      var customerIds = ['checkout-first-name', 'checkout-last-name', 'checkout-email', 'checkout-phone', 'checkout-cpf'];
+      var customerFields = document.getElementById('customerFields');
+      if (customerFields) {
+        var mo = new MutationObserver(function (mutations) {
+          if (mutations.length > 0) {
+            console.warn('[CHECKOUT DEBUG] #customerFields DOM alterado após CEP/frete!', mutations);
+            console.trace('[CHECKOUT DEBUG] Stack:');
+          }
+        });
+        mo.observe(customerFields, { childList: true, subtree: true, attributes: true, characterData: true });
+      }
+      customerIds.forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        try {
+          var proto = Object.getPrototypeOf(el);
+          var desc = Object.getOwnPropertyDescriptor(proto, 'value') || Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
+          if (!desc || !desc.set) return;
+          var origSet = desc.set;
+          Object.defineProperty(el, 'value', {
+            get: desc.get,
+            set: function (v) {
+              if (window.__cepFetchDone) {
+                var cur = desc.get ? desc.get.call(this) : this.getAttribute('value');
+                if (String(v) !== String(cur)) {
+                  console.warn('[CHECKOUT DEBUG] Input', id, 'value alterado para', JSON.stringify(v), 'após CEP/frete. Função/arquivo:');
+                  console.trace();
+                }
+              }
+              origSet.call(this, v);
+            },
+            configurable: true,
+            enumerable: true
+          });
+        } catch (e) { console.warn('[CHECKOUT DEBUG] Erro ao instrumentar', id, e); }
+      });
+    })();
+
+    /** Restaura placeholders em Nome, Sobrenome e Nome no cartão - usa getElementById apenas, não roda durante CEP */
     var placeholderFields = [
-      { name: 'firstName', placeholder: 'Nome' },
-      { name: 'lastName', placeholder: 'Sobrenome' },
-      { name: 'cardName', placeholder: 'Nome no cartão' }
+      { id: 'checkout-first-name', placeholder: 'Nome' },
+      { id: 'checkout-last-name', placeholder: 'Sobrenome' },
+      { id: 'checkout-card-name', placeholder: 'Nome no cartão' }
     ];
     function restorePlaceholders() {
       placeholderFields.forEach(function (f) {
-        var input = form?.querySelector('input[name="' + f.name + '"]');
+        var input = document.getElementById(f.id);
         if (!input) return;
         if (!input.value || !input.value.trim()) {
           input.value = '';
@@ -376,37 +399,53 @@
       });
     }
     restorePlaceholders();
-    [100, 300, 600, 1200, 2000].forEach(function (ms) { setTimeout(restorePlaceholders, ms); });
-    var placeholderTries = 0;
-    var placeholderInterval = setInterval(function () {
-      restorePlaceholders();
-      placeholderTries++;
-      if (placeholderTries >= 10) clearInterval(placeholderInterval);
-    }, 400);
+    [100, 300].forEach(function (ms) { setTimeout(restorePlaceholders, ms); });
 
-    document.querySelectorAll('input[name="payment"]').forEach(radio => {
-      radio.addEventListener('change', () => {
+    formShipping?.querySelectorAll('input[name="payment"]').forEach(function (radio) {
+      radio.addEventListener('change', function () {
         if (radio.value === 'card') updateParcelasOptions();
       });
     });
-
-    document.querySelector('input[name="phone"]')?.addEventListener('input', (e) => maskPhone(e.target));
-    document.querySelector('input[name="cpf"]')?.addEventListener('input', (e) => maskCpf(e.target));
-    const cepInput = document.getElementById('checkout-cep');
-    const cepOverlay = document.getElementById('checkout-cep-overlay');
-    var isCepFetching = false;
-    cepInput?.addEventListener('input', (e) => {
-      maskCep(e.target);
-      const cep = (e.target.value || '').replace(/\D/g, '');
-      if (cep.length === 8 && !isCepFetching) fetchCep(cep);
+    formShipping?.addEventListener('change', function (e) {
+      if (e.target && e.target.getAttribute('name') === 'shipping') updateCheckoutShippingAndTotal();
     });
-    document.getElementById('checkout-busca-cep')?.addEventListener('click', () => {
-      const cep = (cepInput?.value || '').replace(/\D/g, '');
-      if (cep.length !== 8) {
+
+    formCustomer?.querySelector('input[name="phone"]')?.addEventListener('input', function (e) { maskPhone(e.target); });
+    formCustomer?.querySelector('input[name="cpf"]')?.addEventListener('input', function (e) { maskCpf(e.target); });
+    var cepUi = document.getElementById('cep_ui');
+    var cepInput = document.getElementById('checkout-cep');
+    var cepOverlay = document.getElementById('checkout-cep-overlay');
+    var isCepFetching = false;
+
+    function formatCepMask(digits) {
+      if (digits.length <= 5) return digits;
+      return digits.slice(0, 5) + '-' + digits.slice(5, 8);
+    }
+
+    function syncCepUiToProxy() {
+      if (!cepUi || !cepInput) return;
+      var digits = (cepUi.value || '').replace(/\D/g, '').slice(0, 8);
+      var formatted = formatCepMask(digits);
+      cepUi.value = formatted;
+      cepInput.value = digits;
+      if (digits.length === 8 && !isCepFetching) fetchCep(digits);
+    }
+
+    cepUi?.addEventListener('input', function () {
+      syncCepUiToProxy();
+    });
+    cepUi?.addEventListener('paste', function () {
+      setTimeout(syncCepUiToProxy, 0);
+    });
+
+    document.getElementById('checkout-busca-cep')?.addEventListener('click', function () {
+      syncCepUiToProxy();
+      var digits = (cepInput?.value || '').replace(/\D/g, '');
+      if (digits.length !== 8) {
         showError('postalCode', 'Digite um CEP válido (8 dígitos)');
         return;
       }
-      if (!isCepFetching) fetchCep(cep);
+      if (!isCepFetching) fetchCep(digits);
     });
 
     function showCepOverlay(show) {
@@ -429,10 +468,12 @@
       isCepFetching = true;
       showCepOverlay(true);
       var placeholder = document.getElementById('checkout-shipping-placeholder');
-      if (placeholder) {
-        placeholder.classList.remove('checkout-form__shipping-placeholder--loaded');
-        placeholder.textContent = 'Carregando fretes disponíveis...';
-      }
+      var placeholderText = document.getElementById('checkout-shipping-placeholder-text');
+      var methodsEl = document.getElementById('shippingMethods');
+      if (placeholder) placeholder.classList.remove('checkout-form__shipping-placeholder--loaded');
+      if (placeholderText) placeholderText.textContent = 'Carregando fretes disponíveis...';
+      if (placeholderText) placeholderText.hidden = false;
+      if (methodsEl) methodsEl.hidden = true;
       var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2500); });
       fetch('https://viacep.com.br/ws/' + cep + '/json/')
         .then(function (r) { return r.json(); })
@@ -441,9 +482,11 @@
           var data = result[1];
           isCepFetching = false;
           showCepOverlay(false);
+          window.__cepFetchDone = true;
           if (data.erro) {
             showError('postalCode', 'CEP não encontrado');
-            if (placeholder) placeholder.textContent = 'Insira seu endereço para ver os métodos de envio disponíveis.';
+            if (placeholderText) { placeholderText.textContent = 'Insira seu endereço para ver os métodos de envio disponíveis.'; placeholderText.hidden = false; }
+            if (methodsEl) methodsEl.hidden = true;
             return;
           }
           clearErrors();
@@ -457,20 +500,22 @@
           }
           if (cityEl) cityEl.value = data.localidade || '';
           if (stateEl) stateEl.value = data.uf || '';
-          if (cepInput) cepInput.focus();
+          if (cepUi) cepUi.focus();
           renderShippingMethods();
         })
         .catch(function () {
           minDelay.then(function () {
             isCepFetching = false;
             showCepOverlay(false);
+            window.__cepFetchDone = true;
             showError('postalCode', 'Erro ao buscar CEP');
-            if (placeholder) placeholder.textContent = 'Insira seu endereço para ver os métodos de envio disponíveis.';
+            if (placeholderText) { placeholderText.textContent = 'Insira seu endereço para ver os métodos de envio disponíveis.'; placeholderText.hidden = false; }
+            if (methodsEl) methodsEl.hidden = true;
           });
         });
     }
-    document.querySelector('input[name="cardNumber"]')?.addEventListener('input', (e) => maskCardNumber(e.target));
-    document.querySelector('input[name="cardExpiry"]')?.addEventListener('input', (e) => maskExpiry(e.target));
+    formShipping?.querySelector('input[name="cardNumber"]')?.addEventListener('input', function (e) { maskCardNumber(e.target); });
+    formShipping?.querySelector('input[name="cardExpiry"]')?.addEventListener('input', function (e) { maskExpiry(e.target); });
 
     document.getElementById('checkout-apply-discount')?.addEventListener('click', () => {
       const input = document.getElementById('checkout-discount-input');
@@ -510,24 +555,23 @@
       new ResizeObserver(checkScroll).observe(itemsEl);
     }
 
-    form?.addEventListener('submit', (e) => {
-      e.preventDefault();
+    document.getElementById('checkout-submit')?.addEventListener('click', function () {
       if (getCart().length === 0) {
         alert('Seu carrinho está vazio. Adicione itens antes de finalizar.');
         return;
       }
       clearErrors();
 
-      const email = form.querySelector('input[name="email"]').value.trim();
-      const phone = form.querySelector('input[name="phone"]').value.trim();
-      const firstName = form.querySelector('input[name="firstName"]').value.trim();
-      const lastName = form.querySelector('input[name="lastName"]').value.trim();
-      const cpf = form.querySelector('input[name="cpf"]').value.trim();
-      const postalCode = form.querySelector('input[name="postalCode"]').value.trim();
-      const address = form.querySelector('input[name="address"]').value.trim();
-      const city = form.querySelector('input[name="city"]').value.trim();
-      const state = form.querySelector('select[name="state"]').value;
-      const payment = form.querySelector('input[name="payment"]:checked')?.value;
+      var email = formCustomer?.querySelector('input[name="email"]')?.value?.trim() || '';
+      var phone = formCustomer?.querySelector('input[name="phone"]')?.value?.trim() || '';
+      var firstName = formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || '';
+      var lastName = formCustomer?.querySelector('input[name="last_name"]')?.value?.trim() || '';
+      var cpf = formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || '';
+      var postalCode = formShipping?.querySelector('input[name="postalCode"]')?.value?.trim() || '';
+      var address = formShipping?.querySelector('input[name="address"]')?.value?.trim() || '';
+      var city = formShipping?.querySelector('input[name="city"]')?.value?.trim() || '';
+      var state = formShipping?.querySelector('select[name="state"]')?.value || '';
+      var payment = formShipping?.querySelector('input[name="payment"]:checked')?.value;
 
       let valid = true;
       if (!email) { showError('email', 'Email é obrigatório'); valid = false; }
@@ -542,17 +586,17 @@
       if (!address) { showError('address', 'Endereço é obrigatório'); valid = false; }
       if (!city) { showError('city', 'Cidade é obrigatória'); valid = false; }
       if (!state) { showError('state', 'Estado é obrigatório'); valid = false; }
-      const shippingSelected = document.querySelector('input[name="shipping"]:checked');
+      var shippingSelected = formShipping?.querySelector('input[name="shipping"]:checked');
       if (!shippingSelected) {
         alert('Informe seu CEP e selecione um método de envio antes de continuar.');
         valid = false;
       }
 
       if (payment === 'card') {
-        const cardNumber = form.querySelector('input[name="cardNumber"]').value.replace(/\s/g, '');
-        const cardExpiry = form.querySelector('input[name="cardExpiry"]').value;
-        const cardCvv = form.querySelector('input[name="cardCvv"]').value;
-        const cardName = form.querySelector('input[name="cardName"]').value.trim();
+        var cardNumber = formShipping?.querySelector('input[name="cardNumber"]')?.value?.replace(/\s/g, '') || '';
+        var cardExpiry = formShipping?.querySelector('input[name="cardExpiry"]')?.value || '';
+        var cardCvv = formShipping?.querySelector('input[name="cardCvv"]')?.value || '';
+        var cardName = formShipping?.querySelector('input[name="cardName"]')?.value?.trim() || '';
         if (cardNumber.length < 13) { valid = false; /* add error */ }
         if (!cardExpiry || cardExpiry.length < 5) { valid = false; }
         if (!cardCvv || cardCvv.length < 3) { valid = false; }
@@ -614,7 +658,7 @@
           }
         } catch (_) {}
 
-        const submitBtn = form.querySelector('button[type="submit"]');
+        var submitBtn = document.getElementById('checkout-submit');
         const origText = submitBtn?.textContent;
         if (submitBtn) submitBtn.disabled = true;
         if (origText) submitBtn.textContent = 'Gerando PIX...';

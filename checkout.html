@@ -111,56 +111,76 @@
 
       <!-- Formulário: abaixo do resumo -->
       <div class="checkout__form-col">
-          <form class="checkout-form" id="checkout-form" novalidate action method="POST" autocomplete="on">
-            <!-- Contato: Email e Telefone obrigatórios -->
-            <section class="checkout-form__section checkout-form__section--contact" aria-labelledby="contact-heading">
-              <h2 id="contact-heading" class="checkout-form__title">Contato</h2>
-              <div class="checkout-form__row checkout-form__row--grid-2">
-                <label class="checkout-form__field" for="checkout-email">
-                  <input type="email" id="checkout-email" name="email" required placeholder="Email" autocomplete="section-checkout email" aria-label="Email">
-                  <span class="checkout-form__error" data-field="email"></span>
-                </label>
-                <label class="checkout-form__field" for="checkout-phone">
-                  <input type="tel" id="checkout-phone" name="phone" required placeholder="Telefone" autocomplete="section-checkout tel-national" aria-label="Telefone">
-                  <span class="checkout-form__error" data-field="phone"></span>
-                </label>
-              </div>
-              <label class="checkout-form__checkbox" for="checkout-tracking">
-                <input type="checkbox" id="checkout-tracking" name="tracking" checked>
-                <span>Enviar rastreamento e atualizações do pedido por WhatsApp</span>
-              </label>
-            </section>
+        <div class="checkout-form">
+          <!-- Autofill decoys -->
+          <div class="checkout-form__autofill-decoys" aria-hidden="true">
+            <input type="text" autocomplete="given-name" tabindex="-1">
+            <input type="text" autocomplete="family-name" tabindex="-1">
+            <input type="email" autocomplete="email" tabindex="-1">
+            <input type="tel" autocomplete="tel" tabindex="-1">
+            <input type="text" autocomplete="postal-code" tabindex="-1">
+            <input type="text" autocomplete="address-line1" tabindex="-1">
+          </div>
 
-            <!-- Entrega -->
+          <!-- Form 1: Dados do cliente - container fixo, NUNCA recriar -->
+          <form id="formCustomer" class="checkout-form__customer-form" novalidate autocomplete="on">
+            <div id="customerFields" data-checkout-container="customer">
+              <section class="checkout-form__section checkout-form__section--contact" aria-labelledby="contact-heading">
+                <h2 id="contact-heading" class="checkout-form__title">Contato</h2>
+                <div class="checkout-form__row checkout-form__row--grid-2">
+                  <label class="checkout-form__field" for="checkout-email">
+                    <input type="email" id="checkout-email" name="email" required placeholder="Email" autocomplete="section-customer email" aria-label="Email">
+                    <span class="checkout-form__error" data-field="email"></span>
+                  </label>
+                  <label class="checkout-form__field" for="checkout-phone">
+                    <input type="tel" id="checkout-phone" name="phone" required placeholder="Telefone" autocomplete="section-customer tel-national" aria-label="Telefone">
+                    <span class="checkout-form__error" data-field="phone"></span>
+                  </label>
+                </div>
+                <label class="checkout-form__checkbox" for="checkout-tracking">
+                  <input type="checkbox" id="checkout-tracking" name="tracking" checked>
+                  <span>Enviar rastreamento e atualizações do pedido por WhatsApp</span>
+                </label>
+              </section>
+              <section class="checkout-form__section checkout-form__section--customer" aria-labelledby="customer-heading">
+                <h2 id="customer-heading" class="checkout-form__title">Dados para entrega</h2>
+                <div class="checkout-form__field-block">
+                  <div class="checkout-form__row checkout-form__row--grid-2">
+                    <label class="checkout-form__field" for="checkout-first-name">
+                      <input type="text" id="checkout-first-name" name="first_name" required placeholder="Nome" autocomplete="section-customer given-name" aria-label="Nome">
+                      <span class="checkout-form__error" data-field="firstName"></span>
+                    </label>
+                    <label class="checkout-form__field" for="checkout-last-name">
+                      <input type="text" id="checkout-last-name" name="last_name" required placeholder="Sobrenome" autocomplete="section-customer family-name" aria-label="Sobrenome">
+                      <span class="checkout-form__error" data-field="lastName"></span>
+                    </label>
+                  </div>
+                </div>
+                <div class="checkout-form__field-block">
+                  <label class="checkout-form__field" for="checkout-cpf">
+                    <input type="text" id="checkout-cpf" name="cpf" required placeholder="CPF" autocomplete="off" aria-label="CPF">
+                    <span class="checkout-form__error" data-field="cpf"></span>
+                  </label>
+                </div>
+              </section>
+            </div>
+          </form>
+
+          <!-- Form 2: Endereço/CEP (CEP script só preenche aqui) -->
+          <form id="formShipping" class="checkout-form__shipping-form" novalidate autocomplete="on">
             <section class="checkout-form__section checkout-form__section--delivery" id="checkout-delivery-section" role="group" aria-labelledby="delivery-heading">
               <div class="checkout-form__cep-overlay" id="checkout-cep-overlay" aria-hidden="true" aria-live="polite" hidden>
                 <span class="checkout-form__cep-overlay-spinner"></span>
                 <span class="checkout-form__cep-overlay-text">Buscando endereço pelo CEP...</span>
               </div>
-              <h2 id="delivery-heading" class="checkout-form__title">Entrega</h2>
+              <h2 id="delivery-heading" class="checkout-form__title">Endereço</h2>
               <input type="hidden" name="country" value="BR">
+              <div id="addressFields" data-checkout-container="address">
               <div class="checkout-form__field-block">
-                <div class="checkout-form__row checkout-form__row--grid-2">
-                  <label class="checkout-form__field" for="checkout-first-name">
-                    <input type="text" id="checkout-first-name" name="firstName" required placeholder="Nome" autocomplete="section-checkout shipping given-name" aria-label="Nome">
-                    <span class="checkout-form__error" data-field="firstName"></span>
-                  </label>
-                  <label class="checkout-form__field" for="checkout-last-name">
-                    <input type="text" id="checkout-last-name" name="lastName" required placeholder="Sobrenome" autocomplete="section-checkout shipping family-name" aria-label="Sobrenome">
-                    <span class="checkout-form__error" data-field="lastName"></span>
-                  </label>
-                </div>
-              </div>
-              <div class="checkout-form__field-block">
-                <label class="checkout-form__field" for="checkout-cpf">
-                  <input type="text" id="checkout-cpf" name="cpf" required placeholder="CPF" autocomplete="off" aria-label="CPF">
-                  <span class="checkout-form__error" data-field="cpf"></span>
-                </label>
-              </div>
-              <div class="checkout-form__field-block">
-                <label class="checkout-form__field checkout-form__field--cep" for="checkout-cep">
+                <label class="checkout-form__field checkout-form__field--cep" for="cep_ui">
                   <div class="checkout-form__input-wrap">
-                    <input type="text" id="checkout-cep" name="postalCode" required placeholder="CEP" autocomplete="section-checkout shipping postal-code" aria-label="CEP">
+                    <input type="text" id="cep_ui" name="cep_ui" placeholder="CEP" autocomplete="one-time-code" inputmode="numeric" maxlength="9" aria-label="CEP" data-cep-ui>
+                    <input type="text" id="checkout-cep" name="postalCode" required placeholder="CEP" autocomplete="section-checkout shipping postal-code" aria-label="CEP (técnico)" class="checkout-form__cep-proxy" tabindex="-1" aria-hidden="true" maxlength="8">
                     <button type="button" class="checkout-form__cep-btn" id="checkout-busca-cep" aria-label="Buscar CEP" title="Buscar endereço pelo CEP">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
                     </button>
@@ -221,17 +241,36 @@
                   </label>
                 </div>
               </div>
-            </section>
-
-            <!-- Método de envio -->
-            <section class="checkout-form__section checkout-form__section--shipping-method" aria-labelledby="shipping-method-heading">
-              <h2 id="shipping-method-heading" class="checkout-form__title">Método de envio</h2>
-              <div class="checkout-form__shipping-placeholder" id="checkout-shipping-placeholder">
-                <span>Insira seu endereço para ver os métodos de envio disponíveis.</span>
               </div>
             </section>
 
-            <!-- Pagamento: Cartão e PIX -->
+            <!-- Método de envio: SOMENTE este bloco é alterado ao carregar frete -->
+            <section class="checkout-form__section checkout-form__section--shipping-method" aria-labelledby="shipping-method-heading">
+              <h2 id="shipping-method-heading" class="checkout-form__title">Método de envio</h2>
+              <div class="checkout-form__shipping-placeholder" id="checkout-shipping-placeholder">
+                <span class="checkout-form__shipping-placeholder-text" id="checkout-shipping-placeholder-text">Insira seu endereço para ver os métodos de envio disponíveis.</span>
+                <div id="shippingMethods" class="checkout-form__shipping-methods" data-checkout-container="shipping" hidden>
+                  <label class="checkout-form__shipping-option">
+                    <input type="radio" name="shipping" value="express">
+                    <span class="checkout-form__shipping-label">
+                      <strong>Entrega Expressa</strong>
+                      <span class="checkout-form__shipping-days">1 à 3 dias úteis</span>
+                    </span>
+                    <span class="checkout-form__shipping-price">R$ 19,90</span>
+                  </label>
+                  <label class="checkout-form__shipping-option">
+                    <input type="radio" name="shipping" value="free" checked>
+                    <span class="checkout-form__shipping-label">
+                      <strong>Entrega Grátis</strong>
+                      <span class="checkout-form__shipping-days">3 à 5 dias úteis</span>
+                    </span>
+                    <span class="checkout-form__shipping-price checkout-form__shipping-price--free">Grátis</span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <!-- Pagamento -->
             <section class="checkout-form__section" aria-labelledby="payment-heading">
               <h2 id="payment-heading" class="checkout-form__title">Pagamento</h2>
               <p class="checkout-form__secure-note">Todas as transações são seguras e criptografadas. Seu pedido inclui trocas gratuitas e atendimento 24/7 ao cliente.</p>
@@ -305,8 +344,9 @@
 
             </section>
 
-            <button type="submit" class="checkout-form__submit" id="checkout-submit">Finalizar compra</button>
+            <button type="button" class="checkout-form__submit" id="checkout-submit">Finalizar compra</button>
           </form>
+        </div>
       </div>
     </main>
 
