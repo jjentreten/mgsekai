@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Finalizar compra | Manga Sekai Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    window.pixelId = "6971ae2caf494da0e99c8028";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+    document.head.appendChild(a);
+  </script>
+  <script>
+    window.tikTokPixelId = "697eb4acd4886f567540c7a7";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel-tiktok.js");
+    document.head.appendChild(a);
+  </script>
+</head>
+<body class="checkout-page">
+  <a href="#checkout-main" class="checkout__skip-link">Pular para o conteúdo</a>
+  <!-- Barra sticky do timer (largura total, mesmo padrão da loja) -->
+  <div class="checkout-offer-countdown" id="checkout-offer-countdown" aria-live="polite" hidden>
+    <div class="checkout-offer-countdown__inner page-width">
+      <span class="checkout-offer-countdown__message">⏳ OFERTA RESERVADA POR <strong id="checkout-offer-time">15:00</strong></span>
+    </div>
+  </div>
+
+  <div class="checkout">
+    <header class="checkout__header">
+      <a href="index.html" class="checkout__banner">
+        <img src="assets/checkout-banner.png" alt="Manga Sekai Shop" class="checkout__banner-img">
+      </a>
+    </header>
+
+    <main id="checkout-main" class="checkout__main page-width">
+      <h1 class="checkout__main-title visually-hidden">Finalizar compra - Manga Sekai Shop</h1>
+
+      <!-- Resumo do pedido: no topo, abaixo do cabeçalho -->
+      <aside class="checkout__summary-col">
+        <div class="checkout-summary" id="checkout-summary">
+          <button type="button" class="checkout-summary__toggle" id="checkout-summary-toggle" aria-controls="checkout-summary-content" aria-expanded="true" aria-label="Resumo do pedido - expandir ou recolher">
+            <header class="checkout-summary__header">
+              <h2 class="checkout-summary__title">Resumo do pedido</h2>
+              <span class="checkout-summary__toggle-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M12 4.75 7.354 9.396a.5.5 0 0 1-.708 0L2 4.75"/></svg>
+              </span>
+            </header>
+          </button>
+          <div id="checkout-summary-content" class="checkout-summary__content">
+            <section class="checkout-summary__cart" aria-label="Carrinho de compras">
+              <div class="checkout-summary__items-wrap">
+                <div class="checkout-summary__items" id="checkout-items" role="list"></div>
+              </div>
+              <p class="checkout-summary__scroll-hint" id="checkout-scroll-hint" aria-hidden="true">Role para ver mais itens</p>
+            </section>
+            <section class="checkout-summary__discount-section">
+              <h3 id="checkout-discount-heading" class="checkout-summary__section-title">Código de desconto ou vale</h3>
+              <div class="checkout-summary__discount-code">
+                <input type="text" id="checkout-discount-input" placeholder="Código de desconto ou vale" aria-labelledby="checkout-discount-heading">
+                <button type="button" class="checkout-summary__apply-btn" id="checkout-apply-discount">Aplicar</button>
+              </div>
+            </section>
+            <section class="checkout-summary__cost" aria-labelledby="checkout-cost-heading">
+              <h3 id="checkout-cost-heading" class="checkout-summary__section-title visually-hidden">Resumo dos custos</h3>
+              <div role="table" aria-labelledby="checkout-cost-heading" class="checkout-summary__cost-table">
+                <div role="rowgroup" class="checkout-summary__cost-body">
+                  <div class="checkout-summary__discount checkout-summary__cost-row" id="checkout-discount-row" role="row" style="display:none">
+                    <span role="rowheader">Descontos</span>
+                    <span role="cell" id="checkout-discount-value">-R$ 0,00</span>
+                  </div>
+                  <div class="checkout-summary__subtotal checkout-summary__cost-row" role="row">
+                    <span role="rowheader" id="checkout-subtotal-label">Subtotal</span>
+                    <span role="cell" id="checkout-subtotal">R$ 0,00</span>
+                  </div>
+                  <div class="checkout-summary__shipping checkout-summary__cost-row" role="row">
+                    <span role="rowheader">
+                      <span>Frete</span>
+                      <button type="button" class="checkout-summary__shipping-help" aria-label="Informações sobre frete" title="Frete grátis em compras acima de 1 item">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14"><circle cx="7" cy="7" r="5.5" stroke="currentColor" fill="none"/><path stroke="currentColor" stroke-linecap="round" d="M5.5 5.25a1.5 1.5 0 1 1 2.428 1.179C7.494 6.77 7 7.198 7 7.75"/></svg>
+                      </button>
+                    </span>
+                    <span role="cell" id="checkout-shipping-value">—</span>
+                  </div>
+                  <div class="checkout-summary__total checkout-summary__cost-row" role="row">
+                    <span role="rowheader">Total</span>
+                    <span role="cell" id="checkout-total">R$ 0,00</span>
+                  </div>
+                  <div class="checkout-summary__savings checkout-summary__cost-row" id="checkout-savings-row" role="row" style="display:none">
+                    <span role="rowheader">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" d="M12.75 3.25v2.844a2.5 2.5 0 0 1-.708 1.743L7.75 12.25m1-10.5H6.699a2 2 0 0 0-1.414.586L1.737 5.883a1.75 1.75 0 0 0 0 2.475l2.332 2.331a1.5 1.5 0 0 0 2.121 0l3.724-3.724a2 2 0 0 0 .586-1.414V3.5a1.75 1.75 0 0 0-1.75-1.75"/></svg>
+                      <strong>Economia total</strong>
+                    </span>
+                    <span role="cell" id="checkout-savings-value">R$ 0,00</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Formulário: abaixo do resumo -->
+      <div class="checkout__form-col">
+          <form class="checkout-form" id="checkout-form" novalidate action method="POST" autocomplete="on">
+            <!-- Contato: Email e Telefone obrigatórios -->
+            <section class="checkout-form__section checkout-form__section--contact" aria-labelledby="contact-heading">
+              <h2 id="contact-heading" class="checkout-form__title">Contato</h2>
+              <div class="checkout-form__row checkout-form__row--grid-2">
+                <label class="checkout-form__field" for="checkout-email">
+                  <input type="email" id="checkout-email" name="email" required placeholder="Email" autocomplete="section-checkout email" aria-label="Email">
+                  <span class="checkout-form__error" data-field="email"></span>
+                </label>
+                <label class="checkout-form__field" for="checkout-phone">
+                  <input type="tel" id="checkout-phone" name="phone" required placeholder="Telefone" autocomplete="section-checkout tel-national" aria-label="Telefone">
+                  <span class="checkout-form__error" data-field="phone"></span>
+                </label>
+              </div>
+              <label class="checkout-form__checkbox" for="checkout-tracking">
+                <input type="checkbox" id="checkout-tracking" name="tracking" checked>
+                <span>Enviar rastreamento e atualizações do pedido por WhatsApp</span>
+              </label>
+            </section>
+
+            <!-- Entrega -->
+            <section class="checkout-form__section checkout-form__section--delivery" id="checkout-delivery-section" role="group" aria-labelledby="delivery-heading">
+              <div class="checkout-form__cep-overlay" id="checkout-cep-overlay" aria-hidden="true" aria-live="polite" hidden>
+                <span class="checkout-form__cep-overlay-spinner"></span>
+                <span class="checkout-form__cep-overlay-text">Buscando endereço pelo CEP...</span>
+              </div>
+              <h2 id="delivery-heading" class="checkout-form__title">Entrega</h2>
+              <input type="hidden" name="country" value="BR">
+              <div class="checkout-form__field-block">
+                <div class="checkout-form__row checkout-form__row--grid-2">
+                  <label class="checkout-form__field" for="checkout-first-name">
+                    <input type="text" id="checkout-first-name" name="firstName" required placeholder="Nome" autocomplete="section-checkout shipping given-name" aria-label="Nome">
+                    <span class="checkout-form__error" data-field="firstName"></span>
+                  </label>
+                  <label class="checkout-form__field" for="checkout-last-name">
+                    <input type="text" id="checkout-last-name" name="lastName" required placeholder="Sobrenome" autocomplete="section-checkout shipping family-name" aria-label="Sobrenome">
+                    <span class="checkout-form__error" data-field="lastName"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="checkout-form__field-block">
+                <label class="checkout-form__field" for="checkout-cpf">
+                  <input type="text" id="checkout-cpf" name="cpf" required placeholder="CPF" autocomplete="off" aria-label="CPF">
+                  <span class="checkout-form__error" data-field="cpf"></span>
+                </label>
+              </div>
+              <div class="checkout-form__field-block">
+                <label class="checkout-form__field checkout-form__field--cep" for="checkout-cep">
+                  <div class="checkout-form__input-wrap">
+                    <input type="text" id="checkout-cep" name="postalCode" required placeholder="CEP" autocomplete="section-checkout shipping postal-code" aria-label="CEP">
+                    <button type="button" class="checkout-form__cep-btn" id="checkout-busca-cep" aria-label="Buscar CEP" title="Buscar endereço pelo CEP">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    </button>
+                  </div>
+                  <span class="checkout-form__error" data-field="postalCode"></span>
+                </label>
+              </div>
+              <div class="checkout-form__field-block">
+                <label class="checkout-form__field" for="checkout-address">
+                  <input type="text" id="checkout-address" name="address" required placeholder="Endereço" autocomplete="section-checkout shipping address-line1" aria-label="Endereço">
+                  <span class="checkout-form__error" data-field="address"></span>
+                </label>
+              </div>
+              <div class="checkout-form__field-block">
+                <label class="checkout-form__field" for="checkout-complement">
+                  <input type="text" id="checkout-complement" name="complement" placeholder="Apto, bloco, etc. (opcional)" autocomplete="section-checkout shipping address-line2" aria-label="Complemento">
+                  <span class="checkout-form__error checkout-form__error--spacer" data-field="complement" aria-hidden="true"></span>
+                </label>
+              </div>
+              <div class="checkout-form__field-block">
+                <div class="checkout-form__row checkout-form__row--grid-2">
+                  <label class="checkout-form__field" for="checkout-city">
+                    <input type="text" id="checkout-city" name="city" required placeholder="Cidade" autocomplete="section-checkout shipping address-level2" aria-label="Cidade">
+                    <span class="checkout-form__error" data-field="city"></span>
+                  </label>
+                  <label class="checkout-form__field" for="checkout-state">
+                    <select id="checkout-state" name="state" required autocomplete="section-checkout shipping address-level1" aria-label="Estado">
+                      <option value="">Estado</option>
+                    <option value="AC">Acre</option>
+                    <option value="AL">Alagoas</option>
+                    <option value="AP">Amapá</option>
+                    <option value="AM">Amazonas</option>
+                    <option value="BA">Bahia</option>
+                    <option value="CE">Ceará</option>
+                    <option value="DF">Distrito Federal</option>
+                    <option value="ES">Espírito Santo</option>
+                    <option value="GO">Goiás</option>
+                    <option value="MA">Maranhão</option>
+                    <option value="MT">Mato Grosso</option>
+                    <option value="MS">Mato Grosso do Sul</option>
+                    <option value="MG">Minas Gerais</option>
+                    <option value="PA">Pará</option>
+                    <option value="PB">Paraíba</option>
+                    <option value="PR">Paraná</option>
+                    <option value="PE">Pernambuco</option>
+                    <option value="PI">Piauí</option>
+                    <option value="RJ">Rio de Janeiro</option>
+                    <option value="RN">Rio Grande do Norte</option>
+                    <option value="RS">Rio Grande do Sul</option>
+                    <option value="RO">Rondônia</option>
+                    <option value="RR">Roraima</option>
+                    <option value="SC">Santa Catarina</option>
+                    <option value="SP">São Paulo</option>
+                    <option value="SE">Sergipe</option>
+                    <option value="TO">Tocantins</option>
+                  </select>
+                    <span class="checkout-form__error" data-field="state"></span>
+                  </label>
+                </div>
+              </div>
+            </section>
+
+            <!-- Método de envio -->
+            <section class="checkout-form__section checkout-form__section--shipping-method" aria-labelledby="shipping-method-heading">
+              <h2 id="shipping-method-heading" class="checkout-form__title">Método de envio</h2>
+              <div class="checkout-form__shipping-placeholder" id="checkout-shipping-placeholder">
+                <span>Insira seu endereço para ver os métodos de envio disponíveis.</span>
+              </div>
+            </section>
+
+            <!-- Pagamento: Cartão e PIX -->
+            <section class="checkout-form__section" aria-labelledby="payment-heading">
+              <h2 id="payment-heading" class="checkout-form__title">Pagamento</h2>
+              <p class="checkout-form__secure-note">Todas as transações são seguras e criptografadas. Seu pedido inclui trocas gratuitas e atendimento 24/7 ao cliente.</p>
+              <div class="checkout-form__payment-methods">
+                <div class="checkout-form__payment-option checkout-form__payment-option--card" data-payment="card">
+                  <label class="checkout-form__payment-option-header" for="checkout-payment-card">
+                    <input type="radio" id="checkout-payment-card" name="payment" value="card">
+                    <span class="checkout-form__payment-icon" aria-hidden="true">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28"><defs><linearGradient id="payment-icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#42a5f5"/><stop offset="100%" stop-color="#5c6bc0"/></linearGradient></defs><path fill="url(#payment-icon-gradient)" d="M20 4H4c-1.11 0-1.99.89-1.99 2L2 18c0 1.11.89 2 2 2h16c1.11 0 2-.89 2-2V6c0-1.11-.89-2-2-2zm0 14H4v-6h16v6zm0-10H4V6h16v2z"/></svg>
+                    </span>
+                    <span class="checkout-form__payment-label">
+                      <span class="checkout-form__payment-name">Cartão de crédito</span>
+                      <span class="checkout-form__payment-icons">Visa · Mastercard · Elo · Hipercard</span>
+                    </span>
+                  </label>
+                  <div class="checkout-form__payment-option-content" id="card-fields">
+                    <div class="checkout-form__card-inner">
+                      <label class="checkout-form__field checkout-form__field--card-number" for="checkout-card-number">
+                        <div class="checkout-form__input-wrap">
+                          <input type="text" id="checkout-card-number" name="cardNumber" placeholder="Número do cartão" maxlength="19" autocomplete="cc-number" aria-label="Número do cartão">
+                          <span class="checkout-form__input-icon checkout-form__input-icon--lock" aria-hidden="true">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z"/></svg>
+                          </span>
+                        </div>
+                      </label>
+                      <div class="checkout-form__row checkout-form__row--grid-2">
+                        <label class="checkout-form__field" for="checkout-card-expiry">
+                          <input type="text" id="checkout-card-expiry" name="cardExpiry" placeholder="Validade (MM/AA)" maxlength="5" autocomplete="cc-exp" aria-label="Validade do cartão">
+                        </label>
+                        <label class="checkout-form__field checkout-form__field--cvv" for="checkout-card-cvv">
+                          <div class="checkout-form__input-wrap">
+                            <input type="text" id="checkout-card-cvv" name="cardCvv" placeholder="CVV" maxlength="4" autocomplete="cc-csc" aria-label="CVV">
+                            <span class="checkout-form__input-icon checkout-form__input-icon--help" title="3 ou 4 dígitos no verso do cartão" aria-hidden="true">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+                            </span>
+                          </div>
+                        </label>
+                      </div>
+                      <label class="checkout-form__field" for="checkout-card-name">
+                        <input type="text" id="checkout-card-name" name="cardName" placeholder="Nome no cartão" autocomplete="cc-name" aria-label="Nome no cartão">
+                      </label>
+                      <label class="checkout-form__field" for="checkout-parcelas">
+                        <select id="checkout-parcelas" name="parcelas" aria-label="Parcelas">
+                          <option value="1">1x de R$ 0,00 *</option>
+                        </select>
+                      </label>
+                      <label class="checkout-form__checkbox checkout-form__checkbox--billing" for="checkout-same-billing">
+                        <input type="checkbox" id="checkout-same-billing" name="sameBilling" checked>
+                        <span>Usar endereço de entrega como endereço de cobrança</span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="checkout-form__payment-option checkout-form__payment-option--pix" data-payment="pix">
+                  <label class="checkout-form__payment-option-header" for="checkout-payment-pix">
+                    <input type="radio" id="checkout-payment-pix" name="payment" value="pix" checked>
+                    <span class="checkout-form__payment-icon checkout-form__payment-icon--pix" aria-hidden="true">
+                      <i class="fa-brands fa-pix"></i>
+                    </span>
+                    <span class="checkout-form__payment-label">
+                      <span class="checkout-form__payment-name">PIX</span>
+                      <span class="checkout-form__payment-desc">Aprovação instantânea</span>
+                    </span>
+                  </label>
+                  <div class="checkout-form__payment-option-content" id="pix-fields">
+                    <p class="checkout-form__pix-info">Você será redirecionado para finalizar o pagamento via PIX. A aprovação é instantânea.</p>
+                  </div>
+                </div>
+              </div>
+
+            </section>
+
+            <button type="submit" class="checkout-form__submit" id="checkout-submit">Finalizar compra</button>
+          </form>
+      </div>
+    </main>
+
+    <!-- Modal de carregamento / erro do cartão -->
+    <div class="checkout-modal" id="checkout-modal" aria-hidden="true">
+      <div class="checkout-modal__backdrop"></div>
+      <div class="checkout-modal__content" role="dialog" aria-labelledby="checkout-modal-title">
+        <div class="checkout-modal__loading" id="checkout-modal-loading">
+          <span class="checkout-modal__spinner" aria-hidden="true"></span>
+          <p class="checkout-modal__msg">Processando seu pedido...</p>
+          <p class="checkout-modal__msg-secondary" id="checkout-modal-msg-secondary">Realizando contato com a operadora...</p>
+        </div>
+        <div class="checkout-modal__error" id="checkout-modal-error" style="display:none">
+          <span class="checkout-modal__error-icon" aria-hidden="true"><i class="fa-solid fa-circle-exclamation"></i></span>
+          <h2 id="checkout-modal-title" class="checkout-modal__error-title">Não foi possível comunicar com a operadora</h2>
+          <p class="checkout-modal__error-code">ERRO 203</p>
+          <p class="checkout-modal__error-desc">Nossa operadora de cartões está temporariamente indisponível. Por favor, faça o pagamento via PIX — é rápido, seguro e a aprovação é instantânea.</p>
+          <button type="button" class="checkout-modal__btn-pix" id="checkout-modal-btn-pix"><i class="fa-brands fa-pix"></i> Pagar com PIX</button>
+          <button type="button" class="checkout-modal__btn-close" id="checkout-modal-btn-close">Fechar</button>
+        </div>
+      </div>
+    </div>
+
+    <footer class="checkout__footer">
+      <nav class="checkout__footer-nav" aria-label="Políticas e informações">
+        <ul class="checkout__footer-list">
+          <li><a href="#" class="checkout__footer-link">Política de reembolso</a></li>
+          <li><a href="#" class="checkout__footer-link">Envio</a></li>
+          <li><a href="#" class="checkout__footer-link">Privacidade</a></li>
+          <li><a href="#" class="checkout__footer-link">Termos de uso</a></li>
+          <li><a href="#" class="checkout__footer-link">Contato</a></li>
+        </ul>
+      </nav>
+    </footer>
+  </div>
+
+  <script src="checkout.js"></script>
+</body>
+</html>

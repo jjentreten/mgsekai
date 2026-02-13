@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mitsuri Light Box | Manga Sekai Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <!-- Oferta ativada - countdown (acima do header) -->
+  <div class="offer-countdown" id="offer-countdown" aria-live="polite" hidden>
+    <div class="offer-countdown__inner page-width">
+      <span class="offer-countdown__message">Oferta ativada! Acaba em <strong id="offer-countdown-time">15:00</strong></span>
+    </div>
+  </div>
+
+  <!-- Faixa Rolante -->
+  <div class="announcement-bar">
+    <div class="horizontal-ticker">
+      <div class="horizontal-ticker__track">
+        <p class="horizontal-ticker__item">LEVE 3, GANHE 2 🛍️</p>
+        <p class="horizontal-ticker__item">FRETE GRÁTIS PARA TODO O BRASIL 🇧🇷</p>
+        <p class="horizontal-ticker__item">PROMOÇÃO DE ANO NOVO 🎁</p>
+        <p class="horizontal-ticker__item">LEVE 3, GANHE 2 🛍️</p>
+        <p class="horizontal-ticker__item">FRETE GRÁTIS PARA TODO O BRASIL 🇧🇷</p>
+        <p class="horizontal-ticker__item">PROMOÇÃO DE ANO NOVO 🎁</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header-wrapper">
+    <header class="main-header page-width">
+      <button class="header__icon header__icon--menu" aria-label="Menu" id="menu-toggle">
+        <span class="icon-hamburger"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><path d="M1 .5a.5.5 0 100 1h15.71a.5.5 0 000-1H1zM.5 8a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1A.5.5 0 01.5 8zm0 7a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1a.5.5 0 01-.5-.5z" fill="currentColor"/></svg></span>
+        <span class="icon-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 17"><path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/></svg></span>
+      </button>
+      <h1 class="header__heading">
+        <a href="../index.html" class="header__heading-link">
+          <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" class="header__logo" width="70" height="70">
+        </a>
+      </h1>
+      <div class="header__icons">
+        <button class="header__icon header__icon--search" aria-label="Pesquisar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 19" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 112.85 3.5a5.784 5.784 0 018.18 8.18zm.26 1.12a6.78 6.78 0 11.72-.7l5.4 5.4a.5.5 0 11-.71.7l-5.41-5.4z" fill="currentColor"/></svg>
+        </button>
+        <a href="#" class="header__icon header__icon--cart" aria-label="Carrinho">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36.52 45.01"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12.88,10.4H41.23l2.5,27.78a5,5,0,0,1-5,5.47H15.25a5,5,0,0,1-5-5.49Z" transform="translate(-8.73 -0.14)"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19.62,15.51V9.1a7.46,7.46,0,0,1,14.92,0v6.41" transform="translate(-8.73 -0.14)"/></svg>
+          <span class="cart-count">1</span>
+        </a>
+      </div>
+    </header>
+    <div class="menu-drawer" id="menu-drawer">
+      <div class="menu-drawer__inner">
+        <div class="menu-drawer__header">
+          <h3 class="menu-drawer__title">Menu</h3>
+          <button class="menu-drawer__close" id="menu-close" aria-label="Fechar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 17"><path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/></svg></button>
+        </div>
+        <nav class="menu-drawer__nav">
+          <ul class="menu-drawer__list">
+            <li><a href="../index.html">Início</a></li>
+            <li><a href="../mais-populares.html">Mais vendidos</a></li>
+            <li><a href="../collections.html">Comprar por anime</a></li>
+            <li><a href="../collections.html">Comprar por personagem</a></li>
+            <li><a href="#">Rastrear pedido</a></li>
+            <li><a href="#">Sobre nós</a></li>
+            <li><a href="#">Avaliações</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="menu-drawer__overlay" id="menu-overlay"></div>
+  </header>
+
+  <!-- Conteúdo principal: página do produto -->
+  <main class="product-page">
+    <div class="product-page__inner page-width">
+      <div class="product-page__layout">
+        <!-- Galeria de imagens -->
+        <div class="product-page__gallery">
+          <div class="product-gallery">
+            <div class="product-gallery__main">
+              <img id="product-main-image" src="https://mangahikarishop.com/cdn/shop/files/L-36-3.jpg?v=1749255483&width=800" alt="Mitsuri Light Box" width="800" height="800">
+            </div>
+          </div>
+        </div>
+
+        <!-- Informações do produto -->
+        <div class="product-page__info">
+          <div class="product-promo-banner">
+            <span>LEVE 2, GANHE 1</span>
+            <span class="product-promo-banner__divider">|</span>
+            <span>LEVE 3, GANHE 2</span>
+            <span class="product-promo-banner__icon">🎁</span>
+          </div>
+
+          <div class="product-rating">
+            <span class="product-rating__stars" aria-hidden="true">★★★★★</span>
+            <span class="product-rating__count">60.000+ otakus satisfeitos</span>
+          </div>
+
+          <h1 class="product-page__title">Mitsuri Light Box</h1>
+
+          <div class="product-page__price price price--large price--on-sale">
+            <div class="price__container">
+              <span class="price-item price-item--sale">R$ 37,10</span>
+              <s class="price-item price-item--regular">R$ 99,00</s>
+            </div>
+            <span class="badge badge--sale">LEVE 2, GANHE 1</span>
+          </div>
+
+          <!-- Cor da moldura -->
+          <fieldset class="product-form__field product-form__field--pill">
+            <legend class="product-form__label">Cor da moldura</legend>
+            <div class="product-form__options">
+              <label class="product-form__option product-form__option--pill is-selected">
+                <input type="radio" name="frame-color" value="White" checked>
+                <span>Branco</span>
+              </label>
+              <label class="product-form__option product-form__option--pill">
+                <input type="radio" name="frame-color" value="Black">
+                <span>Preto</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="product-form__submit">
+            <button type="button" class="button button--primary button--full-width product-form__atc">Adicionar ao carrinho</button>
+          </div>
+
+          <div class="product-page__payment">
+            <span class="visually-hidden">Formas de pagamento aceitas</span>
+            <ul class="product-page__payment-list" role="list" id="product-payment-icons"></ul>
+          </div>
+
+          <div class="product-highlights">
+            <ul>
+              <li>👨‍🎤 Deixe seu espaço refletir sua paixão</li>
+              <li>🎁 Presente perfeito para qualquer amante de anime</li>
+              <li>⚡ Alimentado via USB ou pilhas AAA</li>
+            </ul>
+          </div>
+
+          <!-- Acordeões -->
+          <div class="product-accordions">
+            <details class="product-accordion">
+              <summary>
+                <h2 class="product-accordion__title">Dimensões</h2>
+                <svg class="icon-caret" viewBox="0 0 10 6" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z"/></svg>
+              </summary>
+              <div class="product-accordion__content">
+                <ul>
+                  <li>Comprimento (profundidade): 5,1 cm - 2,5"</li>
+                  <li>Largura: 18 cm - 7"</li>
+                  <li>Altura: 7,6 cm - 3"</li>
+                </ul>
+              </div>
+            </details>
+            <details class="product-accordion">
+              <summary>
+                <h2 class="product-accordion__title">Materiais</h2>
+                <svg class="icon-caret" viewBox="0 0 10 6" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z"/></svg>
+              </summary>
+              <div class="product-accordion__content">
+                <ul>
+                  <li>Madeira japonesa</li>
+                  <li>Papel</li>
+                  <li>Luz LED</li>
+                </ul>
+                <p>Suporta 3 pilhas AAA para uso sem fio</p>
+              </div>
+            </details>
+            <details class="product-accordion">
+              <summary>
+                <h2 class="product-accordion__title">Incluído na caixa</h2>
+                <svg class="icon-caret" viewBox="0 0 10 6" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z"/></svg>
+              </summary>
+              <div class="product-accordion__content">
+                <ul>
+                  <li>1x Light box</li>
+                  <li>1x Cabo USB</li>
+                </ul>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avaliações de clientes -->
+      <section class="product-reviews">
+        <h2 class="product-reviews__title">Avaliações de clientes</h2>
+        <div class="product-reviews__slider">
+          <div class="product-reviews__track">
+            <div class="product-reviews__slide">
+              <p class="product-reviews__text"><em>"Comprei um para o aniversário do meu irmãozinho e acabei pedindo 7 para mim. A impressão e o brilho são muito melhores do que eu esperava."</em></p>
+              <p class="product-reviews__author">Loney, TX</p>
+              <span class="product-reviews__stars">★★★★★</span>
+            </div>
+            <div class="product-reviews__slide">
+              <p class="product-reviews__text"><em>"De longe o melhor merch de anime que já comprei! A qualidade da caixa é incrível e adiciona uma vibe incrível ao meu quarto."</em></p>
+              <p class="product-reviews__author">Mia, NY</p>
+              <span class="product-reviews__stars">★★★★★</span>
+            </div>
+            <div class="product-reviews__slide">
+              <p class="product-reviews__text"><em>"Não imaginei que uma simples light box pudesse ficar tão incrível. Fica ainda mais impressionante ao vivo, vale cada centavo."</em></p>
+              <p class="product-reviews__author">Jephtey, OR</p>
+              <span class="product-reviews__stars">★★★★★</span>
+            </div>
+          </div>
+          <div class="product-reviews__controls">
+            <button type="button" class="product-reviews__arrow product-reviews__arrow--prev" aria-label="Avaliação anterior">
+              <svg viewBox="0 0 10 6" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" transform="rotate(90 5 3)"/></svg>
+            </button>
+            <div class="product-reviews__dots">
+              <button type="button" class="product-reviews__dot is-active" aria-label="Avaliação 1" data-index="0"></button>
+              <button type="button" class="product-reviews__dot" aria-label="Avaliação 2" data-index="1"></button>
+              <button type="button" class="product-reviews__dot" aria-label="Avaliação 3" data-index="2"></button>
+            </div>
+            <button type="button" class="product-reviews__arrow product-reviews__arrow--next" aria-label="Próxima avaliação">
+              <svg viewBox="0 0 10 6" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" transform="rotate(-90 5 3)"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Veja as light boxes em ação -->
+      <section class="product-videos">
+        <h2 class="product-videos__title">Veja as light boxes em ação</h2>
+        <div class="product-videos__slider">
+          <div class="product-videos__track">
+            <div class="product-videos__slide" data-index="0">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/66a841de36504c3f87b1c8073c8bb7bb/66a841de36504c3f87b1c8073c8bb7bb.HD-1080p-2.5Mbps-63413211.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/66a841de36504c3f87b1c8073c8bb7bb.thumbnail.0000000000_300x300.jpg?v=1763668259" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+            <div class="product-videos__slide" data-index="1">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/0a232b503d57419f9aad9ef62742b381/0a232b503d57419f9aad9ef62742b381.HD-1080p-2.5Mbps-65374418.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/0a232b503d57419f9aad9ef62742b381.thumbnail.0000000000_300x300.jpg?v=1765998271" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+            <div class="product-videos__slide" data-index="2">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/20c66b5e21af44c1a49961e52c549d10/20c66b5e21af44c1a49961e52c549d10.HD-1080p-7.2Mbps-62848726.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/20c66b5e21af44c1a49961e52c549d10.thumbnail.0000000000_300x300.jpg?v=1763210533" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+            <div class="product-videos__slide" data-index="3">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/832ea84dd04a4601952b8bdd96911289/832ea84dd04a4601952b8bdd96911289.HD-1080p-7.2Mbps-61034374.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/832ea84dd04a4601952b8bdd96911289.thumbnail.0000000000_300x300.jpg?v=1761625986" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+            <div class="product-videos__slide" data-index="4">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/dc33b6dd1cc74730929727838d77115a/dc33b6dd1cc74730929727838d77115a.HD-1080p-4.8Mbps-49844518.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/dc33b6dd1cc74730929727838d77115a.thumbnail.0000000000_300x300.jpg?v=1750623262" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+            <div class="product-videos__slide" data-index="5">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/64928fd5d21e4f9190aa08fc9666179b/64928fd5d21e4f9190aa08fc9666179b.HD-720p-1.6Mbps-49844487.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/64928fd5d21e4f9190aa08fc9666179b.thumbnail.0000000000_300x300.jpg?v=1750623185" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+            <div class="product-videos__slide" data-index="6">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/6c75a277eb894c1cac3faf4eae75f668/6c75a277eb894c1cac3faf4eae75f668.HD-1080p-2.5Mbps-64999215.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/6c75a277eb894c1cac3faf4eae75f668.thumbnail.0000000000_300x300.jpg?v=1765500115" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+            <div class="product-videos__slide" data-index="7">
+              <div class="product-videos__video-wrap">
+                <video src="https://mangahikarishop.com/cdn/shop/videos/c/vp/a8590fdf81ea4e00a336f21fef2fe7e3/a8590fdf81ea4e00a336f21fef2fe7e3.HD-1080p-2.5Mbps-65374419.mp4?v=0" muted playsinline autoplay loop preload="metadata" poster="https://mangahikarishop.com/cdn/shop/files/preview_images/a8590fdf81ea4e00a336f21fef2fe7e3.thumbnail.0000000000_300x300.jpg?v=1765998270" loading="lazy"></video>
+              </div>
+              <div class="product-videos__play-icon" aria-hidden="true">
+                <svg viewBox="0 0 70 70"><g opacity="0.55"><rect x="1" y="1" width="68" height="68" rx="34" fill="#000"></rect></g><path d="M35,1A34,34,0,1,1,1,35,34,34,0,0,1,35,1m0-1h0A35,35,0,0,0,0,35H0A35,35,0,0,0,35,70h0A35,35,0,0,0,70,35h0A35,35,0,0,0,35,0Z" fill="#fff"></path><path d="M45.48,34.39,27.42,24a.7.7,0,0,0-1.05.6V45.43a.7.7,0,0,0,1.05.6L45.48,35.61A.7.7,0,0,0,45.48,34.39Z" fill="#fff"></path></svg>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="product-videos__btn product-videos__btn--prev" aria-label="Vídeo anterior">
+            <svg viewBox="0 0 50 50"><path d="M17.39,7.5A2.27,2.27,0,0,1,19,8.17L34.22,23.39a2.28,2.28,0,0,1,0,3.22L19,41.83a2.28,2.28,0,1,1-3.23-3.23L29.38,25,15.78,11.4a2.29,2.29,0,0,1,0-3.23A2.25,2.25,0,0,1,17.39,7.5Z" fill="currentColor"></path></svg>
+          </button>
+          <button type="button" class="product-videos__btn product-videos__btn--next" aria-label="Próximo vídeo">
+            <svg viewBox="0 0 50 50"><path d="M17.39,7.5A2.27,2.27,0,0,1,19,8.17L34.22,23.39a2.28,2.28,0,0,1,0,3.22L19,41.83a2.28,2.28,0,1,1-3.23-3.23L29.38,25,15.78,11.4a2.29,2.29,0,0,1,0-3.23A2.25,2.25,0,0,1,17.39,7.5Z" fill="currentColor"></path></svg>
+          </button>
+        </div>
+      </section>
+
+      <!-- O que os clientes disseram - fotos e feedback -->
+      <section class="product-testimonials">
+        <div class="product-testimonials__inner page-width">
+          <div class="product-testimonials__heading">
+            <p><strong>O que os clientes disseram!</strong></p>
+            <p><strong>-</strong></p>
+          </div>
+          <div class="product-testimonials__slider">
+            <div class="product-testimonials__track">
+              <div class="product-testimonials__slide" data-index="0">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/475540851_17941406972949970_5334.png?v=1750612061" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Todos os meus amigos querem também agora, pelo menos fui o primeiro a comprar!</p></div>
+                  <div class="product-testimonials__author"><strong>@mcqueen</strong></div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="1">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/Design_sans_titre_6.png?v=1749300774" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Preciso de mais!! São ótimos para a coleção!!</p></div>
+                  <div class="product-testimonials__author"><strong>@dwithpatty</strong></div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="2">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1723495679__0__RPHxzaJH__A12ac5d.png?v=1749266002" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Incrível! Impressionado com o visual e a qualidade das caixas, bem como o efeito de iluminação que adiciona cor e vida ao meu quarto.</p></div>
+                  <div class="product-testimonials__author">@sam</div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="3">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1734146209__inbound3835629992122.png?v=1749266007" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p><strong>ISSO É INCRÍVEL! sheeeshhh 🤯🤯🤯🔥🔥🔥</strong></p></div>
+                  <div class="product-testimonials__author"><strong>@tracer</strong></div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="4">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1723495691__0__uOVHd9L8__A8f5255.png?v=1749266001" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>As cores são vibrantes mas tive um pouco de dificuldade na montagem inicial. Quando ficou pronto, ficou fantástico.</p></div>
+                  <div class="product-testimonials__author"><strong>@theworldisyours</strong></div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="5">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1723495691__0__eaVbVYTa__Aa7fe3a.png?v=1749265997" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Luzes lindas! Ficam incríveis brilhando no escuro.</p></div>
+                  <div class="product-testimonials__author"><strong>@niels_homes</strong></div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="6">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1723495691__0__8iL_4eD6__A8662f3.png?v=1749265999" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Comprei para o meu amor 🥹😭🤯 É o melhor presente de anime que você pode dar a alguém. Agora quero um para mim!</p></div>
+                  <div class="product-testimonials__author"><strong>@monibee17</strong></div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="7">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1723495692__0__qq0GRuy7__Adf0879.png?v=1749265997" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Magnífico. Recomendo a todos.</p></div>
+                  <div class="product-testimonials__author"><strong>@lacey</strong></div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="8">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1730934736__1730934730309-img_54.png?v=1749266007" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Adorei o efeito 3D. Adorei as camadas 3D. Faz a arte saltar e ficar incrível. Dei de presente ao meu marido no Natal e ele amou.</p></div>
+                  <div class="product-testimonials__author">@nicka</div>
+                </div>
+              </div>
+              <div class="product-testimonials__slide" data-index="9">
+                <div class="product-testimonials__media">
+                  <img src="https://mangahikarishop.com/cdn/shop/files/1727805684__1727805680094-9c9e20.png?v=1749266002" alt="Light box de cliente" loading="lazy">
+                </div>
+                <div class="product-testimonials__content">
+                  <div class="product-testimonials__stars">★★★★★</div>
+                  <div class="product-testimonials__text"><p>Ótimo! Meu filhinho juntou dinheiro para comprar... chegou hoje e ele adorou. Ótima qualidade! Já pedi mais para o Natal.</p></div>
+                  <div class="product-testimonials__author">@donna</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-testimonials__nav">
+              <button type="button" class="product-testimonials__btn product-testimonials__btn--prev" aria-label="Depoimento anterior">
+                <svg width="92" height="38" viewBox="0 0 92 38" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform: rotate(180deg);"><path d="M72.472 0L71.063 1.409L87.303 17.649H0V19.643H87.3L71.06 35.883L72.469 37.293L91.115 18.646L72.472 0Z" fill="currentColor"/></svg>
+              </button>
+              <button type="button" class="product-testimonials__btn product-testimonials__btn--next" aria-label="Próximo depoimento">
+                <svg width="92" height="38" viewBox="0 0 92 38" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M72.472 0L71.063 1.409L87.303 17.649H0V19.643H87.3L71.06 35.883L72.469 37.293L91.115 18.646L72.472 0Z" fill="currentColor"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Monte seu combo anime definitivo - Promoção -->
+      <section class="product-promo-combo">
+        <div class="product-promo-combo__inner page-width">
+          <h2 class="product-promo-combo__heading">Monte seu combo anime definitivo</h2>
+          <p class="product-promo-combo__offer">Compre 2 light boxes, ganhe 1 GRÁTIS</p>
+          <div class="product-promo-combo__text">
+            <p>Misture qualquer design da nossa coleção LED — seja Naruto, Demon Slayer ou o presente perfeito. Adicione 3 light boxes ao carrinho e pague apenas por 2. A terceira é por nossa conta.</p>
+          </div>
+          <div class="product-promo-combo__slider">
+            <div class="product-promo-combo__track">
+              <div class="product-promo-combo__slide">
+                <img src="https://mangahikarishop.com/cdn/shop/files/CREATIONPROCESSLIGHTBOX-ezgif.com-video-to-gif-converter_1_3.webp?v=1761622499&width=800" alt="Processo de criação da light box" loading="lazy" width="800" height="800">
+              </div>
+              <div class="product-promo-combo__slide">
+                <img src="https://mangahikarishop.com/cdn/shop/files/ssstik.io_1761438363383-ezgif.com-video-to-webp-converter.webp?v=1761624316&width=800" alt="Light box Luffy" loading="lazy" width="800" height="800">
+              </div>
+              <div class="product-promo-combo__slide">
+                <img src="https://mangahikarishop.com/cdn/shop/files/1077522567618458_video_0-ezgif.com-video-to-webp-converter.webp?v=1763209483&width=800" alt="Light box na caixa" loading="lazy" width="800" height="800">
+              </div>
+            </div>
+            <div class="product-promo-combo__nav">
+              <button type="button" class="product-promo-combo__btn product-promo-combo__btn--prev" aria-label="Anterior">
+                <svg viewBox="0 0 10 6" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" transform="rotate(90 5 3)"/></svg>
+              </button>
+              <span class="product-promo-combo__counter"><span class="product-promo-combo__current">1</span> / <span class="product-promo-combo__total">3</span></span>
+              <button type="button" class="product-promo-combo__btn product-promo-combo__btn--next" aria-label="Próximo">
+                <svg viewBox="0 0 10 6" aria-hidden="true"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" transform="rotate(-90 5 3)"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Seção de feedback - Avaliações dos clientes -->
+      <section class="product-feedback">
+        <div class="product-feedback__rate-us">
+          <h2 class="product-feedback__title">Seu feedback é importante para nós!</h2>
+          <p class="product-feedback__description">Por favor, conte-nos o que você achou das nossas light boxes de anime.</p>
+          <div class="product-feedback__stars" aria-hidden="true">
+            <span class="product-feedback__star">★</span>
+            <span class="product-feedback__star">★</span>
+            <span class="product-feedback__star">★</span>
+            <span class="product-feedback__star">★</span>
+            <span class="product-feedback__star">★</span>
+          </div>
+        </div>
+        <div class="avis-wrapper">
+          <div class="avis-block">
+            <div class="avis-container page-width">
+              <div class="avis-grid" id="avis-masonry">
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1735595358__1735595351223-img_2397__original_a01b4c67-dd68-4532-866e-a74ce3beccc5_720x.jpg?v=1761832148" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Davi <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Pedimos 14 peças e tudo correu bem. As light boxes de anime vieram muito bem embaladas. Uma tinha uma conexão solta. Entramos em contato com o suporte e eles responderam em dois dias. A troca já chegou. Mais uma vez, um grande obrigado à equipe de suporte super atenciosa e pela troca sem complicações.</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1737308240__1737308234393-image_720x.png?v=1761831773" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Carla S. <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Comprei para o aniversário do meu filho! Estava um pouco cética após ler alguns problemas com entrega, mas não tive nenhum problema e a light box era bem feita e fez sucesso com meu filho! Vou comprar mais para ele.</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/A68938dac6ede4921bdc523114e37258_98c126cc-c23e-4f8a-8510-ab5d148bb498_720x.png?v=1761833463" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Débora M. <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Pedí a light box do Asta! Veio em perfeito estado! Veio com cabo ou pode usar pilhas. Adorei! Pedi mais duas e dei uma de presente e ela amou! Não vou mentir, estava com receio de que o site fosse golpe, mas fico feliz de ter pedido porque essas light boxes são demais! Com certeza vou pedir mais!</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1738174399__1738174392131-img_4179__original_afe223a0-d9f3-4c48-8508-44da29cc304f_720x.jpg?v=1761833567" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Anônimo <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Essas light boxes são incríveis e ficam super legais no quarto do meu filho. A qualidade foi muito melhor do que eu esperava e meu filho adora. Temos Zoro, Luffy e Chopper empilhados e ligados na USB do Xbox dele.</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1737246336__1737246333135-img_09_1_720x.png?v=1761831941" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Vitória C. <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Gostei muito das light boxes. São exatamente como descrito e nas fotos.</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1735958311__1735958306342-image__original_addc4a71-1fbb-40dc-891a-7c183ad3d35e_720x.jpg?v=1761832849" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Marcos G. <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Muito brilhante. Super recomendo!</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1738265570__1738265567043-img-20_720x.png?v=1761833140" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Sara R. <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Essa luz é incrível! Dei de presente pro meu namorado e comprei uma da Nezuko pra mim. Foi o primeiro anime que assistimos juntos e é nosso favorito.</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1750084122__img_0897__original_1_720x.png?v=1761833899" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Anônimo <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p><strong>Ótima adição ao meu quarto de jogos!</strong> Fã hardcore de DBZ e não decepcionou. Diferentes cores para diferentes humores. Sempre recebo muitos elogios.</p></div>
+                  </div>
+                </div>
+                <div class="avisBox">
+                  <div class="avisMainImage">
+                    <div class="avisImage">
+                      <img class="firstImage" src="https://mangahikarishop.com/cdn/shop/files/1737642738__1737642725790-image__original_2e3559e4-75ad-42d9-a01c-801db9ed3fc8_720x.jpg?v=1761833425" alt="" loading="lazy">
+                    </div>
+                  </div>
+                  <div class="avisMain">
+                    <h5 class="mainName">Henrique S. <svg class="avis-verified" width="18" height="18" viewBox="0 0 24 24" fill="#1a86e5" aria-hidden="true"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></h5>
+                    <div class="avisRating"><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span><span class="etoile">★</span></div>
+                    <div class="avisContent"><p>Ótimo produto! Sou fã de Naruto há anos e isso é perfeito.</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal de vídeo -->
+      <div class="product-video-modal" id="product-video-modal" aria-hidden="true">
+        <div class="product-video-modal__inner">
+          <div class="product-video-modal__track">
+            <div class="product-video-modal__slide" data-index="0">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/66a841de36504c3f87b1c8073c8bb7bb/66a841de36504c3f87b1c8073c8bb7bb.HD-1080p-2.5Mbps-63413211.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="product-video-modal__slide" data-index="1">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/0a232b503d57419f9aad9ef62742b381/0a232b503d57419f9aad9ef62742b381.HD-1080p-2.5Mbps-65374418.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="product-video-modal__slide" data-index="2">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/20c66b5e21af44c1a49961e52c549d10/20c66b5e21af44c1a49961e52c549d10.HD-1080p-7.2Mbps-62848726.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="product-video-modal__slide" data-index="3">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/832ea84dd04a4601952b8bdd96911289/832ea84dd04a4601952b8bdd96911289.HD-1080p-7.2Mbps-61034374.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="product-video-modal__slide" data-index="4">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/dc33b6dd1cc74730929727838d77115a/dc33b6dd1cc74730929727838d77115a.HD-1080p-4.8Mbps-49844518.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="product-video-modal__slide" data-index="5">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/64928fd5d21e4f9190aa08fc9666179b/64928fd5d21e4f9190aa08fc9666179b.HD-720p-1.6Mbps-49844487.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="product-video-modal__slide" data-index="6">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/6c75a277eb894c1cac3faf4eae75f668/6c75a277eb894c1cac3faf4eae75f668.HD-1080p-2.5Mbps-64999215.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+            <div class="product-video-modal__slide" data-index="7">
+              <div class="product-video-modal__video-wrap">
+                <video data-src="https://mangahikarishop.com/cdn/shop/videos/c/vp/a8590fdf81ea4e00a336f21fef2fe7e3/a8590fdf81ea4e00a336f21fef2fe7e3.HD-1080p-2.5Mbps-65374419.mp4?v=0" muted playsinline loop></video>
+                <button type="button" class="product-video-modal__sound" aria-label="Alternar som">
+                  <svg class="product-video-modal__mute" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm14.525-4l3.536 3.536-1.414 1.414L19 13.414l-3.536 3.536-1.414-1.414L17.586 12 14.05 8.464l1.414-1.414L19 10.586l3.536-3.536 1.414 1.414L20.414 12z"></path></svg>
+                  <svg class="product-video-modal__unmute hidden" viewBox="0 0 24 24" width="24" height="24"><path fill="currentColor" d="M5.889 16H2a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1h3.889l5.294-4.332a.5.5 0 0 1 .817.387v15.89a.5.5 0 0 1-.817.387L5.89 16zm13.517 4.134l-1.416-1.416A8.978 8.978 0 0 0 21 12a8.982 8.982 0 0 0-3.304-6.968l1.42-1.42A10.976 10.976 0 0 1 23 12c0 3.223-1.386 6.122-3.594 8.134zm-3.543-3.543l-1.422-1.422A3.993 3.993 0 0 0 16 12c0-1.43-.75-2.685-1.88-3.392l1.439-1.439A5.991 5.991 0 0 1 18 12c0 1.842-.83 3.49-2.137 4.591z"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="product-video-modal__close" aria-label="Fechar">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path fill="currentColor" fill-rule="evenodd" clip-rule="evenodd" d="M12.0002 10.586L4.70718 3.29297L3.29297 4.70718L10.586 12.0002L3.29297 19.2933L4.70718 20.7075L12.0002 13.4145L19.2933 20.7075L20.7075 19.2933L13.4145 12.0002L20.7075 4.70723L19.2933 3.29302L12.0002 10.586Z"></path></svg>
+          </button>
+          <button type="button" class="product-video-modal__btn product-video-modal__btn--prev" aria-label="Vídeo anterior">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="m8.5 12.8 5.7 5.6c.4.4 1 .4 1.4 0 .4-.4.4-1 0-1.4l-4.9-5 4.9-5c.4-.4.4-1 0-1.4-.2-.2-.4-.3-.7-.3-.3 0-.5.1-.7.3l-5.7 5.6c-.4.5-.4 1.1 0 1.6 0-.1 0-.1 0 0z"></path></svg>
+          </button>
+          <button type="button" class="product-video-modal__btn product-video-modal__btn--next" aria-label="Próximo vídeo">
+            <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.54,11.29,9.88,5.64a1,1,0,0,0-1.42,0,1,1,0,0,0,0,1.41l4.95,5L8.46,17a1,1,0,0,0,0,1.41,1,1,0,0,0,.71.3,1,1,0,0,0,.71-.3l5.66-5.65A1,1,0,0,0,15.54,11.29Z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__content-top page-width">
+      <div class="footer__blocks">
+        <div class="footer-block footer-block--logo">
+          <div class="footer-block__logo">
+            <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" loading="lazy" width="100" height="100">
+          </div>
+        </div>
+        <div class="footer-block footer-block--contact">
+          <h2 class="footer-block__heading">Fale conosco</h2>
+          <div class="footer-block__content">
+            <p>Estamos aqui para ajudar!<br>Estamos disponíveis</p>
+            <p>Segunda a sexta, 9h às 17h (horário de Brasília)</p>
+            <p>Chat ao vivo</p>
+            <p>E-mail: <a href="mailto:hello@mangasekaishop.com">hello@mangasekaishop.com</a></p>
+          </div>
+        </div>
+        <div class="footer-block footer-block--support">
+          <h2 class="footer-block__heading">Suporte</h2>
+          <ul class="footer-block__menu list-unstyled">
+            <li><a href="#">Termos e condições</a></li>
+            <li><a href="#">Política de privacidade</a></li>
+            <li><a href="#">Política de envio</a></li>
+            <li><a href="#">Política de troca e reembolso</a></li>
+            <li><a href="#">Pesquisar</a></li>
+            <li><a href="#">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__social">
+        <a href="https://www.facebook.com/people/Mangasekai-Shop/61570057783762/" class="footer__social-link" aria-label="Facebook">
+          <svg aria-hidden="true" viewBox="0 0 18 18"><path fill="currentColor" d="M16.42.61c.27 0 .5.1.69.28.19.2.28.42.28.7v15.44c0 .27-.1.5-.28.69a.94.94 0 01-.7.28h-4.39v-6.7h2.25l.31-2.65h-2.56v-1.7c0-.4.1-.72.28-.93.18-.2.5-.32 1-.32h1.37V3.35c-.6-.06-1.27-.1-2.01-.1-1.01 0-1.83.3-2.45.9-.62.6-.93 1.44-.93 2.53v1.97H7.04v2.65h2.24V18H.98c-.28 0-.5-.1-.7-.28a.94.94 0 01-.28-.7V1.59c0-.27.1-.5.28-.69a.94.94 0 01.7-.28h15.44z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/mangasekaishop/" class="footer__social-link" aria-label="Instagram">
+          <svg aria-hidden="true" viewBox="0 0 18 18"><path fill="currentColor" d="M8.77 1.58c2.34 0 2.62.01 3.54.05.86.04 1.32.18 1.63.3.41.17.7.35 1.01.66.3.3.5.6.65 1 .12.32.27.78.3 1.64.05.92.06 1.2.06 3.54s-.01 2.62-.05 3.54a4.79 4.79 0 01-.3 1.63c-.17.41-.35.7-.66 1.01-.3.3-.6.5-1.01.66-.31.12-.77.26-1.63.3-.92.04-1.2.05-3.54.05s-2.62 0-3.55-.05a4.79 4.79 0 01-1.62-.3c-.42-.16-.7-.35-1.01-.66-.31-.3-.5-.6-.66-1a4.87 4.87 0 01-.3-1.64c-.04-.92-.05-1.2-.05-3.54s0-2.62.05-3.54c.04-.86.18-1.32.3-1.63.16-.41.35-.7.66-1.01.3-.3.6-.5 1-.65.32-.12.78-.27 1.63-.3.93-.05 1.2-.06 3.55-.06zm0-1.58C6.39 0 6.09.01 5.15.05c-.93.04-1.57.2-2.13.4-.57.23-1.06.54-1.55 1.02C1 1.96.7 2.45.46 3.02c-.22.56-.37 1.2-.4 2.13C0 6.1 0 6.4 0 8.77s.01 2.68.05 3.61c.04.94.2 1.57.4 2.13.23.58.54 1.07 1.02 1.56.49.48.98.78 1.55 1.01.56.22 1.2.37 2.13.4.94.05 1.24.06 3.62.06 2.39 0 2.68-.01 3.62-.05.93-.04 1.57-.2 2.13-.41a4.27 4.27 0 001.55-1.01c.49-.49.79-.98 1.01-1.56.22-.55.37-1.19.41-2.13.04-.93.05-1.23.05-3.61 0-2.39 0-2.68-.05-3.62a6.47 6.47 0 00-.4-2.13 4.27 4.27 0 00-1.02-1.55A4.35 4.35 0 0014.52.46a6.43 6.43 0 00-2.13-.41A69 69 0 008.77 0z"/><path fill="currentColor" d="M8.8 4a4.5 4.5 0 100 9 4.5 4.5 0 000-9zm0 7.43a2.92 2.92 0 110-5.85 2.92 2.92 0 010 5.85zM13.43 5a1.05 1.05 0 100-2.1 1.05 1.05 0 000 2.1z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer__content-bottom">
+      <div class="footer__content-bottom-inner page-width">
+        <div class="footer__payment">
+          <span class="visually-hidden">Formas de pagamento</span>
+          <ul class="footer__payment-list" role="list" id="payment-icons-container"></ul>
+        </div>
+        <div class="footer__copyright">
+          <small>&copy; 2026, <a href="../index.html">Manga Sekai Shop</a></small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="../payment-icons.js"></script>
+  <script src="../script.js"></script>
+  <script src="product-page.js"></script>
+  <script src="../cart.js"></script>
+  <script src="../offer-countdown-bar.js"></script>
+</body>
+</html>

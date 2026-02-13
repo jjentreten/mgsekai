@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pagamento PIX | Manga Sekai Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    window.pixelId = "6971ae2caf494da0e99c8028";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+    document.head.appendChild(a);
+  </script>
+  <script>
+    window.tikTokPixelId = "697eb4acd4886f567540c7a7";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel-tiktok.js");
+    document.head.appendChild(a);
+  </script>
+</head>
+<body class="pix-page">
+  <a href="#pix-main" class="pix__skip-link">Pular para o conteúdo</a>
+  <div class="pix">
+    <header class="pix__header">
+      <div class="pix__header-inner page-width">
+        <a href="index.html" class="pix__logo">
+          <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" width="60" height="60">
+        </a>
+      </div>
+    </header>
+
+    <main id="pix-main" class="pix__main page-width">
+      <div class="pix__card">
+        <div class="pix__header-card">
+          <span class="pix__icon"><i class="fa-brands fa-pix"></i></span>
+          <h1 class="pix__title">Pagamento via PIX</h1>
+          <p class="pix__subtitle">Escaneie o QR Code ou copie o código para pagar no app do seu banco</p>
+        </div>
+
+        <div class="pix__amount">
+          <span class="pix__amount-label">Valor a pagar</span>
+          <span class="pix__amount-value" id="pix-amount">R$ 0,00</span>
+        </div>
+
+        <div class="pix__qr-section">
+          <div class="pix__qr-wrap">
+            <img id="pix-qr" src="" alt="QR Code PIX" class="pix__qr" width="220" height="220">
+          </div>
+        </div>
+
+        <div class="pix__copiacola">
+          <p class="pix__copiacola-label">Ou copie o código PIX (Copia e Cola)</p>
+          <div class="pix__copiacola-wrap">
+            <input type="text" id="pix-code" readonly class="pix__code" value="" aria-label="Código PIX para copiar">
+            <button type="button" class="pix__copy-btn" id="pix-copy-btn" aria-label="Copiar código PIX">
+              <i class="fa-regular fa-copy"></i>
+              <span class="pix__copy-text">Copiar código</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="pix__instructions">
+          <h2 class="pix__instructions-title">Como pagar com PIX</h2>
+          <ol class="pix__instructions-list">
+            <li>Abra o app do seu banco ou a carteira PIX</li>
+            <li>Escolha <strong>Pagar com PIX</strong> ou <strong>PIX QR Code</strong></li>
+            <li>Escaneie o QR Code acima ou cole o código copiado</li>
+            <li>Confirme o valor e finalize o pagamento</li>
+          </ol>
+          <p class="pix__instructions-note">A aprovação é <strong>instantânea</strong>. Após o pagamento, você receberá a confirmação por email.</p>
+        </div>
+
+        <div class="pix__footer-card">
+          <a href="checkout.html" class="pix__back-link"><i class="fa-solid fa-arrow-left"></i> Voltar ao checkout</a>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="pix-payment.js"></script>
+</body>
+</html>

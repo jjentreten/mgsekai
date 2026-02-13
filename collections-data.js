@@ -1,0 +1,111 @@
+/**
+ * Dados das coleções de anime para a página "Todos os animes"
+ * Excluindo "OTHERS" conforme solicitado
+ */
+const ANIME_COLLECTIONS = [
+  {
+    id: 'one-piece',
+    title: 'One Piece',
+    href: 'one-piece.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/29-product.webp?v=1749449571',
+    description: 'Você sabe que o One Piece é real… mas já viu ele iluminar seu quarto?',
+  },
+  {
+    id: 'naruto',
+    title: 'Naruto',
+    href: 'naruto.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/3D-Naruto-Kakashi-LED-Box-Light-Uchiha-Madara-Paper-Carving-Lamp-Jiraiya-Itachi-RC-Frame-Night.jpg_640x640.jpg__3.webp?v=1749451651',
+    description: 'Ele lutou para se tornar Hokage. O mínimo que você pode fazer é dar um lugar na sua parede.',
+  },
+  {
+    id: 'attack-on-titan',
+    title: 'Attack on Titan',
+    href: 'attack-on-titan.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-24-2.jpg?v=1749452502',
+    description: 'As muralhas caíram. Hora de mostrar onde você está.',
+  },
+  {
+    id: 'demon-slayer',
+    title: 'Demon Slayer',
+    href: 'demon-slayer.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/28-1.webp?v=1749450138',
+    description: 'Consegue ouvir o estilo de respiração? Esta peça pertence ao seu domínio.',
+  },
+  {
+    id: 'berserk',
+    title: 'Berserk',
+    href: 'berserk.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-43-3.jpg?v=1749452326',
+    description: 'Guts não precisa de luz… mas seu setup sim.',
+  },
+  {
+    id: 'black-butler',
+    title: 'Black Butler',
+    href: 'black-butler.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/H56b31426d0a24c3d87ea3d0b6780ad4cO.jpg?v=1749452072',
+    description: 'Elegância. Escuridão. Estética. Você já sabe que combina com sua vibe.',
+  },
+  {
+    id: 'bleach',
+    title: 'Bleach',
+    href: 'bleach.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-25-2.jpg?v=1749452235',
+    description: 'Bankai. Hora de liberar todo o poder do seu quarto.',
+  },
+  {
+    id: 'chainsaw-man',
+    title: 'Chainsaw Man',
+    href: 'chainsaw-man.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-14-2.jpg?v=1749451980',
+    description: 'Sangue. Caos. Poder. Era isso que faltava na sua parede.',
+  },
+  {
+    id: 'death-note',
+    title: 'Death Note',
+    href: 'death-note.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-37-2.jpg?v=1749452162',
+    description: 'Escreva o nome dele na sua parede. Ryuk já está observando…',
+  },
+  {
+    id: 'dragon-ball',
+    title: 'Dragon Ball',
+    href: 'dragon-ball.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-33-2_737c7ddb-cfca-41b8-8bf2-d4154936f5bc.jpg?v=1749451817',
+    description: 'Você não precisa ir Super Saiyajin para iluminar seu setup.',
+  },
+  {
+    id: 'hunter-x-hunter',
+    title: 'Hunter X Hunter',
+    href: 'hunter-x-hunter.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-8-3.jpg?v=1749450033',
+    description: 'Seu Nen é único. Seu espaço também deveria ser.',
+  },
+  {
+    id: 'jojos-bizarre-adventure',
+    title: "Jojo's Bizarre Adventure",
+    href: 'jojos-bizarre-adventure.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-59-3_61256a5d-0910-4ab0-aa36-8f851d8e1a37.jpg?v=1749449770',
+    description: 'Pose. Poder. Presença. Faça da sua parede o seu Stand.',
+  },
+  {
+    id: 'jujutsu-kaisen',
+    title: 'Jujutsu Kaisen',
+    href: 'jujutsu-kaisen.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/Lightbox-Manga-Nightlight-3d-Papercut-Desk-Lamp-Wood-Jujutsu-Kaisen-Anime-Light-Box-Satoru-Gojo-Eye_jpg.webp?v=1749451563',
+    description: 'Energia amaldiçoada? Não—essa é uma iluminação abençoada.',
+  },
+  {
+    id: 'my-hero-academia',
+    title: 'My Hero Academia',
+    href: 'my-hero-academia.html',
+    image: 'https://mangahikarishop.com/cdn/shop/collections/L-29-2.jpg?v=1749449838',
+    description: 'Quer ir Plus Ultra? Cerque-se de heróis de verdade.',
+  },
+  {
+    id: 'pokemon',
+    title: 'Pokemon',
+    href: 'pokemon.html',
+    image: 'https://mangasekaishop.com/cdn/shop/files/31_2.jpg?v=1755452660&width=750',
+    description: 'Capture seus favoritos em luz. Seu quarto merece ser uma Pokédex iluminada.',
+  },
+];

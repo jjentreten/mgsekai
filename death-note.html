@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Death Note | Manga Sekai Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Oferta ativada - countdown (acima do header) -->
+  <div class="offer-countdown" id="offer-countdown" aria-live="polite" hidden>
+    <div class="offer-countdown__inner page-width">
+      <span class="offer-countdown__message">Oferta ativada! Acaba em <strong id="offer-countdown-time">15:00</strong></span>
+    </div>
+  </div>
+
+  <!-- Faixa Rolante -->
+  <div class="announcement-bar">
+    <div class="horizontal-ticker">
+      <div class="horizontal-ticker__track">
+        <p class="horizontal-ticker__item">LEVE 3, GANHE 2 🛍️</p>
+        <p class="horizontal-ticker__item">FRETE GRÁTIS PARA TODO O BRASIL 🇧🇷</p>
+        <p class="horizontal-ticker__item">PROMOÇÃO DE ANO NOVO 🎁</p>
+        <p class="horizontal-ticker__item">LEVE 3, GANHE 2 🛍️</p>
+        <p class="horizontal-ticker__item">FRETE GRÁTIS PARA TODO O BRASIL 🇧🇷</p>
+        <p class="horizontal-ticker__item">PROMOÇÃO DE ANO NOVO 🎁</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header-wrapper">
+    <header class="main-header page-width">
+      <button class="header__icon header__icon--menu" aria-label="Menu" id="menu-toggle">
+        <span class="icon-hamburger"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><path d="M1 .5a.5.5 0 100 1h15.71a.5.5 0 000-1H1zM.5 8a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1A.5.5 0 01.5 8zm0 7a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1a.5.5 0 01-.5-.5z" fill="currentColor"/></svg></span>
+        <span class="icon-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 17"><path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/></svg></span>
+      </button>
+      <h1 class="header__heading">
+        <a href="index.html" class="header__heading-link">
+          <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" class="header__logo" width="70" height="70">
+        </a>
+      </h1>
+      <div class="header__icons">
+        <button class="header__icon header__icon--search" aria-label="Pesquisar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 19" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 112.85 3.5a5.784 5.784 0 018.18 8.18zm.26 1.12a6.78 6.78 0 11.72-.7l5.4 5.4a.5.5 0 11-.71.7l-5.41-5.4z" fill="currentColor"/></svg>
+        </button>
+        <a href="#" class="header__icon header__icon--cart" aria-label="Carrinho">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36.52 45.01"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12.88,10.4H41.23l2.5,27.78a5,5,0,0,1-5,5.47H15.25a5,5,0,0,1-5-5.49Z" transform="translate(-8.73 -0.14)"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19.62,15.51V9.1a7.46,7.46,0,0,1,14.92,0v6.41" transform="translate(-8.73 -0.14)"/></svg>
+          <span class="cart-count">1</span>
+        </a>
+      </div>
+    </header>
+    <div class="menu-drawer" id="menu-drawer">
+      <div class="menu-drawer__inner">
+        <div class="menu-drawer__header">
+          <h3 class="menu-drawer__title">Menu</h3>
+          <button class="menu-drawer__close" id="menu-close" aria-label="Fechar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 17"><path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/></svg></button>
+        </div>
+        <nav class="menu-drawer__nav">
+          <ul class="menu-drawer__list">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="mais-populares.html">Mais vendidos</a></li>
+            <li><a href="collections.html">Comprar por anime</a></li>
+            <li><a href="collections.html">Comprar por personagem</a></li>
+            <li><a href="#">Rastrear pedido</a></li>
+            <li><a href="#">Sobre nós</a></li>
+            <li><a href="#">Avaliações</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="menu-drawer__overlay" id="menu-overlay"></div>
+  </header>
+
+  <section class="collection-page">
+    <div class="collection-page__inner page-width">
+      <h1 class="collection-page__title">Death Note</h1>
+      <div class="collection-page__toolbar">
+        <div class="collection-page__sort">
+          <label for="SortBy" class="collection-page__sort-label">Ordenar por:</label>
+          <select id="SortBy" class="collection-page__sort-select" aria-label="Ordenar produtos">
+            <option value="best-selling">Mais vendidos</option>
+            <option value="manual">Destaques</option>
+            <option value="title-ascending">Alfabético, A-Z</option>
+            <option value="title-descending">Alfabético, Z-A</option>
+            <option value="price-ascending">Preço: menor a maior</option>
+            <option value="price-descending">Preço: maior a menor</option>
+            <option value="created-descending">Data: mais recentes</option>
+            <option value="created-ascending">Data: mais antigos</option>
+          </select>
+        </div>
+        <p class="collection-page__count" role="status">2 produtos</p>
+      </div>
+      <ul class="product-grid" id="product-grid">
+        <li class="product-grid__item"><article class="product-card"><a href="products/l-box-light.html" class="product-card__link"><div class="product-card__media"><img src="https://mangahikarishop.com/cdn/shop/files/L-37-2.jpg?v=1749255023&width=533" alt="L Light Box" loading="lazy" width="533" height="533"><span class="product-card__badge badge badge--sale">Promoção</span></div></a><div class="product-card__content"><h3 class="product-card__title"><a href="products/l-box-light.html">L Light Box</a></h3><div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div><button type="button" class="product-card__btn-add button button--secondary">Adicionar ao carrinho</button></div></article></li>
+        <li class="product-grid__item"><article class="product-card"><a href="products/ryuk-box-light.html" class="product-card__link"><div class="product-card__media"><img src="https://mangahikarishop.com/cdn/shop/files/L-38-2.jpg?v=1749255028&width=533" alt="Ryuk Light Box" loading="lazy" width="533" height="533"><span class="product-card__badge badge badge--sale">Promoção</span></div></a><div class="product-card__content"><h3 class="product-card__title"><a href="products/ryuk-box-light.html">Ryuk Light Box</a></h3><div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div><button type="button" class="product-card__btn-add button button--secondary">Adicionar ao carrinho</button></div></article></li>
+      </ul>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer__content-top page-width">
+      <div class="footer__blocks">
+        <div class="footer-block footer-block--logo">
+          <div class="footer-block__logo">
+            <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" loading="lazy" width="100" height="100">
+          </div>
+        </div>
+        <div class="footer-block footer-block--contact">
+          <h2 class="footer-block__heading">Fale conosco</h2>
+          <div class="footer-block__content">
+            <p>Estamos aqui para ajudar!<br>Estamos disponíveis</p>
+            <p>Segunda a sexta, 9h às 17h (horário de Brasília)</p>
+            <p>Chat ao vivo</p>
+            <p>E-mail: <a href="mailto:hello@mangasekaishop.com">hello@mangasekaishop.com</a></p>
+          </div>
+        </div>
+        <div class="footer-block footer-block--support">
+          <h2 class="footer-block__heading">Suporte</h2>
+          <ul class="footer-block__menu list-unstyled">
+            <li><a href="#">Termos e condições</a></li>
+            <li><a href="#">Política de privacidade</a></li>
+            <li><a href="#">Política de envio</a></li>
+            <li><a href="#">Política de troca e reembolso</a></li>
+            <li><a href="#">Pesquisar</a></li>
+            <li><a href="#">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__social">
+        <a href="https://www.facebook.com/people/Mangasekai-Shop/61570057783762/" class="footer__social-link" aria-label="Facebook">
+          <svg aria-hidden="true" viewBox="0 0 18 18"><path fill="currentColor" d="M16.42.61c.27 0 .5.1.69.28.19.2.28.42.28.7v15.44c0 .27-.1.5-.28.69a.94.94 0 01-.7.28h-4.39v-6.7h2.25l.31-2.65h-2.56v-1.7c0-.4.1-.72.28-.93.18-.2.5-.32 1-.32h1.37V3.35c-.6-.06-1.27-.1-2.01-.1-1.01 0-1.83.3-2.45.9-.62.6-.93 1.44-.93 2.53v1.97H7.04v2.65h2.24V18H.98c-.28 0-.5-.1-.7-.28a.94.94 0 01-.28-.7V1.59c0-.27.1-.5.28-.69a.94.94 0 01.7-.28h15.44z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/mangasekaishop/" class="footer__social-link" aria-label="Instagram">
+          <svg aria-hidden="true" viewBox="0 0 18 18"><path fill="currentColor" d="M8.77 1.58c2.34 0 2.62.01 3.54.05.86.04 1.32.18 1.63.3.41.17.7.35 1.01.66.3.3.5.6.65 1 .12.32.27.78.3 1.64.05.92.06 1.2.06 3.54s-.01 2.62-.05 3.54a4.79 4.79 0 01-.3 1.63c-.17.41-.35.7-.66 1.01-.3.3-.6.5-1.01.66-.31.12-.77.26-1.63.3-.92.04-1.2.05-3.54.05s-2.62 0-3.55-.05a4.79 4.79 0 01-1.62-.3c-.42-.16-.7-.35-1.01-.66-.31-.3-.5-.6-.66-1a4.87 4.87 0 01-.3-1.64c-.04-.92-.05-1.2-.05-3.54s0-2.62.05-3.62a6.47 6.47 0 00-.4-2.13 4.27 4.27 0 00-1.02-1.55A4.35 4.35 0 0014.52.46a6.43 6.43 0 00-2.13-.41A69 69 0 008.77 0z"/><path fill="currentColor" d="M8.8 4a4.5 4.5 0 100 9 4.5 4.5 0 000-9zm0 7.43a2.92 2.92 0 110-5.85 2.92 2.92 0 010 5.85zM13.43 5a1.05 1.05 0 100-2.1 1.05 1.05 0 000 2.1z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer__content-bottom">
+      <div class="footer__content-bottom-inner page-width">
+        <div class="footer__payment">
+          <span class="visually-hidden">Formas de pagamento</span>
+          <ul class="footer__payment-list" role="list" id="payment-icons-container"></ul>
+        </div>
+        <div class="footer__copyright">
+          <small>&copy; 2026, <a href="index.html">Manga Sekai Shop</a></small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="payment-icons.js"></script>
+  <script src="script.js"></script>
+  <script src="cart.js"></script>
+  <script src="offer-countdown-bar.js"></script>
+</body>
+</html>

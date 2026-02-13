@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obrigado pela compra | Manga Sekai Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .obrigado-page { min-height: 100vh; background: #0a0a0a; padding-bottom: 3rem; font-family: 'Quantico', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .obrigado__skip-link { position: absolute; top: -4rem; left: 1rem; padding: 0.8rem 1.2rem; background: #42a5f5; color: #fff; font-weight: 600; z-index: 9999; border-radius: 0.4rem; transition: top 0.2s; }
+    .obrigado__skip-link:focus { top: 1rem; outline: 2px solid #fff; outline-offset: 2px; }
+    .obrigado__header { background: #000; border-bottom: 1px solid rgba(255,255,255,0.08); padding: 1.2rem 0; }
+    .obrigado__header-inner { display: flex; justify-content: center; align-items: center; }
+    .obrigado__logo { display: flex; }
+    .obrigado__logo img { border-radius: 0.4rem; }
+    .obrigado__main { padding: 3rem 0; max-width: 52rem; margin: 0 auto; padding-left: 1.6rem; padding-right: 1.6rem; }
+    .obrigado__card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 1rem; padding: 2.4rem; text-align: center; }
+    .obrigado__icon { display: inline-flex; align-items: center; justify-content: center; width: 4rem; height: 4rem; background: linear-gradient(135deg, #4caf50 0%, #388e3c 100%); border-radius: 50%; margin-bottom: 1.2rem; }
+    .obrigado__icon i { font-size: 2.2rem; color: #fff; }
+    .obrigado__title { font-size: 2rem; color: #fff; margin: 0 0 1rem; font-weight: 700; }
+    .obrigado__message { font-size: 1.5rem; color: rgba(255,255,255,0.9); line-height: 1.6; margin: 0 0 1.5rem; }
+    .obrigado__email { font-weight: 700; color: #42a5f5; }
+    .obrigado__back { display: inline-block; margin-top: 1rem; padding: 1rem 1.6rem; background: linear-gradient(135deg, #42a5f5 0%, #5c6bc0 100%); color: #fff; border-radius: 0.6rem; font-weight: 600; }
+    .obrigado__back:hover { opacity: 0.9; }
+  </style>
+  <script>
+    window.pixelId = "6971ae2caf494da0e99c8028";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+    document.head.appendChild(a);
+  </script>
+  <script>
+    window.tikTokPixelId = "697eb4acd4886f567540c7a7";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel-tiktok.js");
+    document.head.appendChild(a);
+  </script>
+</head>
+<body class="obrigado-page">
+  <a href="#obrigado-main" class="obrigado__skip-link">Pular para o conteúdo</a>
+  <div class="obrigado">
+    <header class="obrigado__header">
+      <div class="obrigado__header-inner page-width">
+        <a href="index.html" class="obrigado__logo">
+          <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" width="60" height="60">
+        </a>
+      </div>
+    </header>
+
+    <main id="obrigado-main" class="obrigado__main page-width">
+      <div class="obrigado__card">
+        <div class="obrigado__icon"><i class="fa-solid fa-check"></i></div>
+        <h1 class="obrigado__title">Obrigado por comprar com a gente!</h1>
+        <p class="obrigado__message" id="obrigado-message">
+          Em até 48 horas chegará um e-mail para <span class="obrigado__email" id="obrigado-email">...</span> com todas as informações da compra.
+        </p>
+        <a href="index.html" class="obrigado__back"><i class="fa-solid fa-home"></i> Voltar à loja</a>
+      </div>
+    </main>
+  </div>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var email = params.get('email');
+      if (!email) {
+        try { email = sessionStorage.getItem('manga_sekai_pix_email') || ''; } catch (_) {}
+      }
+      var el = document.getElementById('obrigado-email');
+      if (el) el.textContent = email || '(seu e-mail)';
+    })();
+  </script>
+</body>
+</html>

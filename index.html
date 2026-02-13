@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manga Sekai Shop</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script>
+    window.pixelId = "6971ae2caf494da0e99c8028";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel.js");
+    document.head.appendChild(a);
+  </script>
+  <script>
+    window.tikTokPixelId = "697eb4acd4886f567540c7a7";
+    var a = document.createElement("script");
+    a.setAttribute("async", "");
+    a.setAttribute("defer", "");
+    a.setAttribute("src", "https://cdn.utmify.com.br/scripts/pixel/pixel-tiktok.js");
+    document.head.appendChild(a);
+  </script>
+</head>
+<body>
+  <!-- Oferta ativada - countdown (aparece após ativar desconto no popup) -->
+  <div class="offer-countdown" id="offer-countdown" aria-live="polite" hidden>
+    <div class="offer-countdown__inner page-width">
+      <span class="offer-countdown__message">Oferta ativada! Acaba em <strong id="offer-countdown-time">15:00</strong></span>
+    </div>
+  </div>
+
+  <!-- Faixa Rolante -->
+  <div class="announcement-bar">
+    <div class="horizontal-ticker">
+      <div class="horizontal-ticker__track">
+        <p class="horizontal-ticker__item">LEVE 3, GANHE 2 🛍️</p>
+        <p class="horizontal-ticker__item">FRETE GRÁTIS PARA TODO O BRASIL 🇧🇷</p>
+        <p class="horizontal-ticker__item">PROMOÇÃO DE ANO NOVO 🎁</p>
+        <p class="horizontal-ticker__item">LEVE 3, GANHE 2 🛍️</p>
+        <p class="horizontal-ticker__item">FRETE GRÁTIS PARA TODO O BRASIL 🇧🇷</p>
+        <p class="horizontal-ticker__item">PROMOÇÃO DE ANO NOVO 🎁</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="header-wrapper">
+    <header class="main-header page-width">
+      <button class="header__icon header__icon--menu" aria-label="Menu" id="menu-toggle">
+        <span class="icon-hamburger"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 16"><path d="M1 .5a.5.5 0 100 1h15.71a.5.5 0 000-1H1zM.5 8a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1A.5.5 0 01.5 8zm0 7a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1a.5.5 0 01-.5-.5z" fill="currentColor"/></svg></span>
+        <span class="icon-close"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 17"><path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/></svg></span>
+      </button>
+      <h1 class="header__heading">
+        <a href="index.html" class="header__heading-link">
+          <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" class="header__logo" width="70" height="70">
+        </a>
+      </h1>
+      <div class="header__icons">
+        <button class="header__icon header__icon--search" aria-label="Pesquisar">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 19" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 112.85 3.5a5.784 5.784 0 018.18 8.18zm.26 1.12a6.78 6.78 0 11.72-.7l5.4 5.4a.5.5 0 11-.71.7l-5.41-5.4z" fill="currentColor"/></svg>
+        </button>
+        <button type="button" class="header__icon header__icon--cart" id="cart-toggle" aria-label="Carrinho">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36.52 45.01"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12.88,10.4H41.23l2.5,27.78a5,5,0,0,1-5,5.47H15.25a5,5,0,0,1-5-5.49Z" transform="translate(-8.73 -0.14)"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19.62,15.51V9.1a7.46,7.46,0,0,1,14.92,0v6.41" transform="translate(-8.73 -0.14)"/></svg>
+          <span class="cart-count" style="display:none">0</span>
+        </button>
+      </div>
+    </header>
+    <div class="menu-drawer" id="menu-drawer">
+      <div class="menu-drawer__inner">
+        <div class="menu-drawer__header">
+          <h3 class="menu-drawer__title">Menu</h3>
+          <button class="menu-drawer__close" id="menu-close" aria-label="Fechar"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 18 17"><path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor"/></svg></button>
+        </div>
+        <nav class="menu-drawer__nav">
+          <ul class="menu-drawer__list">
+            <li><a href="index.html">Início</a></li>
+            <li><a href="mais-populares.html">Mais vendidos</a></li>
+            <li><a href="collections.html">Comprar por anime</a></li>
+            <li><a href="collections.html">Comprar por personagem</a></li>
+            <li><a href="#">Rastrear pedido</a></li>
+            <li><a href="#">Sobre nós</a></li>
+            <li><a href="#">Avaliações</a></li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <div class="menu-drawer__overlay" id="menu-overlay"></div>
+  </header>
+
+  <!-- Banner -->
+  <section class="banner">
+    <div class="banner__media">
+      <img src="assets/banner-principal.png" alt="Promoção de Ano Novo: 2+1 grátis, 3+2 grátis. Código NEWYEAR10 para 10% de desconto." class="banner__image">
+    </div>
+  </section>
+
+  <div class="banner-cta">
+    <a href="collections.html" class="btn-bundle">Monte seu combo</a>
+  </div>
+
+  <!-- Testimonials - Fundo escuro como no original -->
+  <section class="testimonials-section">
+    <div class="testimonials__inner page-width">
+      <h2 class="testimonials__title">O presente perfeito</h2>
+      <p class="testimonials__subtitle">Um presente de anime único para verdadeiros otakus. <strong>Peça hoje e receba em até 3 dias úteis!</strong></p>
+        <div class="testimonials-carousel">
+          <button class="carousel__arrow carousel__arrow--prev" aria-label="Anterior">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <button class="carousel__arrow carousel__arrow--next" aria-label="Próximo">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          </button>
+          <div class="carousel__track-container">
+            <div class="carousel__track">
+              <article class="testimonial-card">
+                <div class="testimonial-card__image-wrapper">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/6_495057ce-a87a-43d9-87ff-af25a4e5a49a.jpg?v=1759336793&width=710" alt="" loading="lazy" sizes="(min-width: 990px) 550px, (min-width: 750px) 550px, calc(100vw - 48px)">
+                </div>
+                <div class="testimonial-card__info">
+                  <div class="testimonial-card__stars">
+                    <div class="rating-stars__container">
+                      <div class="rating-stars__underlay">
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                      </div>
+                      <div class="rating-stars__overlay">
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                        <svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="testimonial-card__quotes">
+                    <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M119.472 66.59C53.489 66.59 0 120.094 0 186.1c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.135 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.829-6.389c82.925-90.7 115.385-197.448 115.385-251.8C238.989 120.094 185.501 66.59 119.472 66.59z"/><path fill="currentColor" d="M392.482 66.59c-65.983 0-119.472 53.505-119.472 119.51c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.136 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.828-6.389C479.539 347.2 512 240.452 512 186.1C512 120.094 458.511 66.59 392.482 66.59z"/></svg>
+                  </div>
+                  <div class="rte"><p>Montei o melhor combo! Zoro, Goku e Killua 🔥</p></div>
+                  <div class="testimonial-card__author-container"><p class="testimonial-card__author"><em><strong>Alae.J</strong></em></p></div>
+                </div>
+              </article>
+              <article class="testimonial-card">
+                <div class="testimonial-card__image-wrapper">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/5_035343a1-0ae7-429a-8fa3-6b73ea12f861.jpg?v=1759336794&width=710" alt="" loading="lazy" sizes="(min-width: 990px) 550px, (min-width: 750px) 550px, calc(100vw - 48px)">
+                </div>
+                <div class="testimonial-card__info">
+                  <div class="testimonial-card__stars">
+                  <div class="rating-stars__container">
+                    <div class="rating-stars__underlay"><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></div>
+                    <div class="rating-stars__overlay"><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></div>
+                  </div>
+                </div>
+                  <div class="testimonial-card__quotes"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M119.472 66.59C53.489 66.59 0 120.094 0 186.1c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.135 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.829-6.389c82.925-90.7 115.385-197.448 115.385-251.8C238.989 120.094 185.501 66.59 119.472 66.59z"/><path fill="currentColor" d="M392.482 66.59c-65.983 0-119.472 53.505-119.472 119.51c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.136 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.828-6.389C479.539 347.2 512 240.452 512 186.1C512 120.094 458.511 66.59 392.482 66.59z"/></svg></div>
+                  <div class="rte"><p>Combina perfeitamente com meu setup + a qualidade é incrível!</p></div>
+                  <div class="testimonial-card__author-container"><p class="testimonial-card__author"><em><strong>LPJgamingtech</strong></em></p></div>
+                </div>
+              </article>
+              <article class="testimonial-card">
+                <div class="testimonial-card__image-wrapper">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/4_15a53cde-1748-468b-b6b9-1d4261947be6.jpg?v=1759336794&width=710" alt="" loading="lazy" sizes="(min-width: 990px) 550px, (min-width: 750px) 550px, calc(100vw - 48px)">
+                </div>
+                <div class="testimonial-card__info">
+                  <div class="testimonial-card__stars">
+                  <div class="rating-stars__container">
+                    <div class="rating-stars__underlay"><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></div>
+                    <div class="rating-stars__overlay"><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></div>
+                  </div>
+                </div>
+                  <div class="testimonial-card__quotes"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M119.472 66.59C53.489 66.59 0 120.094 0 186.1c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.135 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.829-6.389c82.925-90.7 115.385-197.448 115.385-251.8C238.989 120.094 185.501 66.59 119.472 66.59z"/><path fill="currentColor" d="M392.482 66.59c-65.983 0-119.472 53.505-119.472 119.51c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.136 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.828-6.389C479.539 347.2 512 240.452 512 186.1C512 120.094 458.511 66.59 392.482 66.59z"/></svg></div>
+                  <div class="rte"><p>Chegou em 6 dias, a embalagem estava perfeita</p></div>
+                  <div class="testimonial-card__author-container"><p class="testimonial-card__author"><em><strong>Kent.G</strong></em></p></div>
+                </div>
+              </article>
+              <article class="testimonial-card">
+                <div class="testimonial-card__image-wrapper">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/3_03dd2dea-7949-4519-8d1c-7da30d1d7c4a.jpg?v=1759336793&width=710" alt="" loading="lazy" sizes="(min-width: 990px) 550px, (min-width: 750px) 550px, calc(100vw - 48px)">
+                </div>
+                <div class="testimonial-card__info">
+                  <div class="testimonial-card__stars">
+                    <div class="rating-stars__container">
+                      <div class="rating-stars__underlay"><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></div>
+                      <div class="rating-stars__overlay"><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg><svg viewBox="0 0 576 512" fill="currentColor"><path d="M316.9 18C311.6 7 300.4 0 288.1 0s-23.4 7-28.8 18L195 150.3 51.4 171.5c-12 1.8-22 10.2-25.7 21.7s-.7 24.2 7.9 32.7L137.8 329 113.2 474.7c-2 12 3 24.2 12.9 31.3s23 8 33.8 2.3l128.3-68.5 128.3 68.5c10.8 5.7 23.9 4.9 33.8-2.3s14.9-19.3 12.9-31.3L438.5 329 542.7 225.9c8.6-8.5 11.7-21.2 7.9-32.7s-13.7-19.9-25.7-21.7L381.2 150.3 316.9 18z"/></svg></div>
+                    </div>
+                  </div>
+                  <div class="testimonial-card__quotes"><svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M119.472 66.59C53.489 66.59 0 120.094 0 186.1c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.135 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.829-6.389c82.925-90.7 115.385-197.448 115.385-251.8C238.989 120.094 185.501 66.59 119.472 66.59z"/><path fill="currentColor" d="M392.482 66.59c-65.983 0-119.472 53.505-119.472 119.51c0 65.983 53.489 119.487 119.472 119.487c0 0-0.578 44.392-36.642 108.284c-4.006 12.802 3.136 26.435 15.945 30.418c9.089 2.859 18.653 0.08 24.828-6.389C479.539 347.2 512 240.452 512 186.1C512 120.094 458.511 66.59 392.482 66.59z"/></svg></div>
+                  <div class="rte"><p>São incríveis, agora preciso achar um lugar melhor</p></div>
+                  <div class="testimonial-card__author-container"><p class="testimonial-card__author"><em><strong>Namastephanieee</strong></em></p></div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+    </div>
+  </section>
+
+  <!-- Anime Worlds - carrossel de lightboxes por anime -->
+  <section class="anime-worlds-section">
+    <div class="anime-worlds__inner page-width">
+      <h2 class="anime-worlds__title">Ilumine seus <strong>mundos de anime</strong> favoritos</h2>
+      <div class="anime-worlds-carousel">
+        <button class="anime-carousel__arrow anime-carousel__arrow--prev" aria-label="Anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="anime-carousel__arrow anime-carousel__arrow--next" aria-label="Próximo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="anime-carousel__track-container">
+          <div class="anime-carousel__track">
+            <a href="one-piece.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangasekaishop.com/cdn/shop/files/L-1-3.jpg?v=1755452791&width=750" alt="One Piece" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">One Piece</div>
+            </a>
+            <a href="naruto.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangahikarishop.com/cdn/shop/files/51-2.webp?v=1749255210&width=750" alt="Naruto" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">Naruto</div>
+            </a>
+            <a href="dragon-ball.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangahikarishop.com/cdn/shop/files/L-33-2.jpg?v=1749255301&width=750" alt="Dragon Ball" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">Dragon Ball</div>
+            </a>
+            <a href="demon-slayer.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangasekaishop.com/cdn/shop/files/28-1.webp?v=1755452779&width=750" alt="Demon Slayer" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">Demon slayer</div>
+            </a>
+            <a href="attack-on-titan.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangasekaishop.com/cdn/shop/files/L-24-2.jpg?v=1755452772&width=750" alt="Attack on Titan" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">Attack on Titan</div>
+            </a>
+            <a href="berserk.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangahikarishop.com/cdn/shop/files/L-43-3.jpg?v=1749255148&width=493" alt="Berserk" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">Berserk</div>
+            </a>
+            <a href="chainsaw-man.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangahikarishop.com/cdn/shop/files/L-14-2.jpg?v=1749254986&width=713" alt="Chainsaw Man" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">Chainsaw Man</div>
+            </a>
+            <a href="pokemon.html" class="anime-worlds-card">
+              <div class="anime-worlds-card__media">
+                <img src="https://mangasekaishop.com/cdn/shop/files/31_2.jpg?v=1755452660&width=750" alt="Pokemon" loading="lazy" sizes="(min-width: 1400px) 433px, (min-width: 750px) calc((100vw - 10rem) / 2), calc(100vw - 4.8rem)">
+              </div>
+              <div class="anime-worlds-card__title">Pokemon</div>
+            </a>
+          </div>
+        </div>
+      </div>
+      <a href="collections.html" class="btn-explore">Explorar todos os mundos de anime</a>
+    </div>
+  </section>
+
+  <!-- Most popular products -->
+  <section class="most-popular-section">
+    <div class="most-popular__inner page-width">
+      <h2 class="most-popular__title">Mais populares</h2>
+      <p class="most-popular__subtitle">Escolhido por mais de 40.000 otakus no mundo</p>
+      <div class="most-popular-carousel">
+        <button class="products-carousel__arrow products-carousel__arrow--prev" aria-label="Anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="products-carousel__arrow products-carousel__arrow--next" aria-label="Próximo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="products-carousel__track-container">
+          <div class="products-carousel__track">
+            <article class="product-card">
+              <a href="products/monkey-d-luffy-box-light.html" class="product-card__link">
+                <div class="product-card__media">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/L-1-3.jpg?v=1755452791&width=533" alt="Monkey D. Luffy Light Box" loading="lazy" sizes="(min-width: 1400px) 317px, (min-width: 750px) calc((100vw - 130px) / 4), calc((100vw - 35px) / 2)">
+                </div>
+              </a>
+              <div class="product-card__content">
+                <h3 class="product-card__title">Monkey D. Luffy Light Box</h3>
+                <div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div>
+                <button type="button" class="product-card__atc">Adicionar ao carrinho</button>
+              </div>
+            </article>
+            <article class="product-card">
+              <a href="products/zoro-box-light.html" class="product-card__link">
+                <div class="product-card__media">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/L-2-2.jpg?v=1755452790&width=533" alt="Zoro Light Box" loading="lazy" sizes="(min-width: 1400px) 317px, (min-width: 750px) calc((100vw - 130px) / 4), calc((100vw - 35px) / 2)">
+                </div>
+              </a>
+              <div class="product-card__content">
+                <h3 class="product-card__title">Zoro Light Box</h3>
+                <div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div>
+                <button type="button" class="product-card__atc">Adicionar ao carrinho</button>
+              </div>
+            </article>
+            <article class="product-card">
+              <a href="products/tanjiro-box-light.html" class="product-card__link">
+                <div class="product-card__media">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/28-1.webp?v=1755452779&width=533" alt="Tanjiro Light Box" loading="lazy" sizes="(min-width: 1400px) 317px, (min-width: 750px) calc((100vw - 130px) / 4), calc((100vw - 35px) / 2)">
+                </div>
+              </a>
+              <div class="product-card__content">
+                <h3 class="product-card__title">Tanjiro Light Box</h3>
+                <div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div>
+                <button type="button" class="product-card__atc">Adicionar ao carrinho</button>
+              </div>
+            </article>
+            <article class="product-card">
+              <a href="products/eren-yeager-box-light.html" class="product-card__link">
+                <div class="product-card__media">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/L-24-2.jpg?v=1755452772&width=533" alt="Eren Yeager Light Box" loading="lazy" sizes="(min-width: 1400px) 317px, (min-width: 750px) calc((100vw - 130px) / 4), calc((100vw - 35px) / 2)">
+                </div>
+              </a>
+              <div class="product-card__content">
+                <h3 class="product-card__title">Eren Yeager Light Box</h3>
+                <div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div>
+                <button type="button" class="product-card__atc">Adicionar ao carrinho</button>
+              </div>
+            </article>
+            <article class="product-card">
+              <a href="products/nezuko-box-light.html" class="product-card__link">
+                <div class="product-card__media">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/Kimetsu-No-Yaiba-paper-cut-shadow-box-for-Home-Decoration-Manga-Table-Desk-Lamp-Anime-Light_jpg.webp?v=1755452774&width=533" alt="Nezuko Light Box" loading="lazy" sizes="(min-width: 1400px) 317px, (min-width: 750px) calc((100vw - 130px) / 4), calc((100vw - 35px) / 2)">
+                </div>
+              </a>
+              <div class="product-card__content">
+                <h3 class="product-card__title">Nezuko Light Box</h3>
+                <div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div>
+                <button type="button" class="product-card__atc">Adicionar ao carrinho</button>
+              </div>
+            </article>
+            <article class="product-card">
+              <a href="products/levi-box-light.html" class="product-card__link">
+                <div class="product-card__media">
+                  <img src="https://mangasekaishop.com/cdn/shop/files/L-26-2.jpg?v=1755452740&width=533" alt="Levi Light Box" loading="lazy" sizes="(min-width: 1400px) 317px, (min-width: 750px) calc((100vw - 130px) / 4), calc((100vw - 35px) / 2)">
+                </div>
+              </a>
+              <div class="product-card__content">
+                <h3 class="product-card__title">Levi Light Box</h3>
+                <div class="product-card__price price price--on-sale"><span class="price-item price-item--sale">R$ 37,10</span><s class="price-item price-item--regular">R$ 99,00</s></div>
+                <button type="button" class="product-card__atc">Adicionar ao carrinho</button>
+              </div>
+            </article>
+          </div>
+        </div>
+      </div>
+      <a href="mais-populares.html" class="btn-view-all">Ver tudo</a>
+    </div>
+  </section>
+
+  <!-- Mix & Match, Build your bundle -->
+  <section class="mix-match-section">
+    <div class="mix-match__inner page-width">
+      <h2 class="mix-match__title">Monte e combine, <strong>monte seu combo</strong> 🎨</h2>
+      <p class="mix-match__text">Escolha 3 Light Boxes que você ama e pague por 2. Adicione 6 e pague por 4. O desconto é aplicado automaticamente no checkout.</p>
+      <div class="mix-match-carousel">
+        <button class="mix-match__arrow mix-match__arrow--prev" aria-label="Anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="mix-match__arrow mix-match__arrow--next" aria-label="Próximo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="mix-match__track-container">
+          <div class="mix-match__track">
+            <div class="mix-match__slide">
+              <div class="mix-match__slide-inner">
+                <img src="https://mangasekaishop.com/cdn/shop/files/CREATIONPROCESSLIGHTBOX-ezgif.com-video-to-gif-converter_1.gif?v=1728608384&width=750" alt="Processo de criação da lightbox" loading="lazy" sizes="(min-width: 768px) calc(100vw / 4), calc(100vw / 2)">
+              </div>
+            </div>
+            <div class="mix-match__slide">
+              <div class="mix-match__slide-inner">
+                <img src="https://mangasekaishop.com/cdn/shop/files/09251-ezgif.com-video-to-gif-converter.gif?v=1727278610&width=750" alt="Produção lightbox" loading="lazy" sizes="(min-width: 768px) calc(100vw / 4), calc(100vw / 2)">
+              </div>
+            </div>
+            <div class="mix-match__slide">
+              <div class="mix-match__slide-inner">
+                <img src="https://mangasekaishop.com/cdn/shop/files/09271-ezgif.com-video-to-gif-converter.gif?v=1727403032&width=750" alt="Montagem lightbox" loading="lazy" sizes="(min-width: 768px) calc(100vw / 4), calc(100vw / 2)">
+              </div>
+            </div>
+            <div class="mix-match__slide">
+              <div class="mix-match__slide-inner">
+                <img src="https://mangasekaishop.com/cdn/shop/files/0925-ezgif.com-video-to-gif-converter.gif?v=1727278610&width=750" alt="Artesanato lightbox" loading="lazy" sizes="(min-width: 768px) calc(100vw / 4), calc(100vw / 2)">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stunning by day, Glowing by night -->
+  <section class="day-night-section">
+    <div class="day-night__inner page-width">
+      <h2 class="day-night__title"><strong>Impressionante</strong> de dia, <strong>brilhante</strong> à noite</h2>
+      <p class="day-night__text">Eleve seu setup com iluminação de anime em camadas que se adapta ao seu espaço.</p>
+      <p class="day-night__text">Limpo, estético e projetado para se encaixar perfeitamente em qualquer ambiente.</p>
+      <div class="day-night-comparison">
+        <div class="day-night__labels">
+          <span class="day-night__label day-night__label--day">Dia</span>
+          <span class="day-night__label day-night__label--night">Noite</span>
+        </div>
+        <div class="day-night__slider-wrapper">
+          <div class="day-night__slider">
+            <div class="day-night__img day-night__img--night">
+              <img src="https://mangasekaishop.com/cdn/shop/files/L-32-2.jpg?v=1755452771&width=1200" alt="Lightbox à noite" loading="lazy">
+            </div>
+            <div class="day-night__img day-night__img--day">
+              <img src="https://mangasekaishop.com/cdn/shop/files/L-32-1.jpg?v=1755452771&width=1200" alt="Lightbox de dia" loading="lazy">
+            </div>
+            <div class="day-night__handle">
+              <div class="day-night__handle-line"></div>
+              <div class="day-night__handle-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5l-5 7 5 7M13 5l-5 7 5 7"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Perfect for your -->
+  <section class="perfect-for-section">
+    <div class="perfect-for__inner page-width">
+      <h2 class="perfect-for__title">Perfeito para o <span class="perfect-for__title-highlight">seu</span></h2>
+      <div class="perfect-for__tabs-header">
+        <button class="perfect-for__tab-btn perfect-for__tab-btn--active" data-index="0">Setup gamer</button>
+        <button class="perfect-for__tab-btn" data-index="1">Decoração de quarto</button>
+        <button class="perfect-for__tab-btn" data-index="2">Parede de colecionador</button>
+        <button class="perfect-for__tab-btn" data-index="3">Lâmpada de cabeceira</button>
+      </div>
+      <div class="perfect-for__panels">
+        <div class="perfect-for__panel perfect-for__panel--active" data-index="0">
+          <div class="perfect-for__media">
+            <img src="https://mangasekaishop.com/cdn/shop/files/Capture_d_ecran_2025-01-14_a_01.56.39.png?v=1736817190&width=750" alt="Gaming setup com lightboxes" loading="lazy" sizes="(min-width: 1400px) 650px, (min-width: 750px) calc((100vw - 130px) / 2), calc(100vw - 50px)">
+          </div>
+          <div class="perfect-for__content">
+            <h3 class="perfect-for__panel-title">Potencialize seu setup</h3>
+            <p>Combine com seu setup RGB e crie uma vibe anime imersiva toda vez que ligar.</p>
+          </div>
+        </div>
+        <div class="perfect-for__panel" data-index="1">
+          <div class="perfect-for__media">
+            <img src="https://mangasekaishop.com/cdn/shop/files/ChatGPT_Image_8_avr._2025_01_41_20.png?v=1758771976&width=750" alt="Decoração de quarto com lightbox" loading="lazy" sizes="(min-width: 1400px) 650px, (min-width: 750px) calc((100vw - 130px) / 2), calc(100vw - 50px)">
+          </div>
+          <div class="perfect-for__content">
+            <h3 class="perfect-for__panel-title">Eleve seu espaço com iluminação ambiente de anime</h3>
+            <p>Perfeito para quartos, dormitórios ou salas — uma peça que gera conversas.</p>
+          </div>
+        </div>
+        <div class="perfect-for__panel" data-index="2">
+          <div class="perfect-for__media">
+            <img src="https://mangasekaishop.com/cdn/shop/files/Alae_1_1.jpg?v=1758816742&width=750" alt="Parede de colecionador" loading="lazy" sizes="(min-width: 1400px) 650px, (min-width: 750px) calc((100vw - 130px) / 2), calc(100vw - 50px)">
+          </div>
+          <div class="perfect-for__content">
+            <h3 class="perfect-for__panel-title">Complete sua coleção</h3>
+            <p>Eleve suas figuras de mangá e pôsteres com retroiluminação para a exibição definitiva.</p>
+          </div>
+        </div>
+        <div class="perfect-for__panel" data-index="3">
+          <div class="perfect-for__media">
+            <img src="https://mangasekaishop.com/cdn/shop/files/Capture_d_ecran_2025-09-25_a_05.49.15.png?v=1758772217&width=750" alt="Lightbox como lâmpada de cabeceira" loading="lazy" sizes="(min-width: 1400px) 650px, (min-width: 750px) calc((100vw - 130px) / 2), calc(100vw - 50px)">
+          </div>
+          <div class="perfect-for__content">
+            <h3 class="perfect-for__panel-title">Durma com seu personagem favorito ao lado</h3>
+            <p>Luz suave e aconchegante — funciona como abajur com seu herói protegendo seus sonhos.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vídeos de demonstração do produto -->
+  <section class="videos-section">
+    <div class="videos__inner page-width">
+      <div class="videos__grid">
+        <div class="videos__item">
+          <div class="videos__video-wrap">
+            <video
+              src="https://mangasekaishop.com/cdn/shop/videos/c/vp/2aabc28931964b349e3f29d8ef56d831/2aabc28931964b349e3f29d8ef56d831.SD-480p-0.9Mbps-46993624.mp4?v=0"
+              poster="https://mangasekaishop.com/cdn/shop/files/preview_images/2aabc28931964b349e3f29d8ef56d831.thumbnail.0000000000.jpg?v=1746383158"
+              autoplay
+              muted
+              loop
+              playsinline
+              disablepictureinpicture
+            ></video>
+          </div>
+        </div>
+        <div class="videos__item">
+          <div class="videos__video-wrap">
+            <video
+              src="https://mangasekaishop.com/cdn/shop/videos/c/vp/41d737a8da4e41658126cc22148c03f5/41d737a8da4e41658126cc22148c03f5.HD-1080p-2.5Mbps-46993331.mp4?v=0"
+              poster="https://mangasekaishop.com/cdn/shop/files/preview_images/41d737a8da4e41658126cc22148c03f5.thumbnail.0000000000.jpg?v=1746382461"
+              autoplay
+              muted
+              loop
+              playsinline
+              disablepictureinpicture
+            ></video>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Vantagens de compra -->
+  <section class="advantages-section">
+    <div class="advantages__inner page-width">
+      <div class="advantages-carousel">
+        <button class="advantages__arrow advantages__arrow--prev" aria-label="Anterior">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="advantages__arrow advantages__arrow--next" aria-label="Próximo">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <div class="advantages__track-container">
+          <div class="advantages__track">
+            <div class="advantage-card">
+              <div class="advantage-card__icon"><span class="material-symbols-outlined">payments</span></div>
+              <h3 class="advantage-card__title">Satisfeito ou dinheiro de volta</h3>
+              <p class="advantage-card__text">30 dias para mudar de ideia</p>
+            </div>
+            <div class="advantage-card">
+              <div class="advantage-card__icon"><span class="material-symbols-outlined">verified</span></div>
+              <h3 class="advantage-card__title">Garantia vitalícia</h3>
+              <p class="advantage-card__text">Garantia vitalícia nas LEDs</p>
+            </div>
+            <div class="advantage-card">
+              <div class="advantage-card__icon"><span class="material-symbols-outlined">support_agent</span></div>
+              <h3 class="advantage-card__title">Suporte ao cliente 7 dias por semana</h3>
+              <p class="advantage-card__text">Disponível para responder todas as suas dúvidas</p>
+            </div>
+            <div class="advantage-card">
+              <div class="advantage-card__icon"><span class="material-symbols-outlined">lock</span></div>
+              <h3 class="advantage-card__title">Pagamento seguro</h3>
+              <p class="advantage-card__text">Criptografia SSL para pagamentos 100% seguros</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer__content-top page-width">
+      <div class="footer__blocks">
+        <div class="footer-block footer-block--logo">
+          <div class="footer-block__logo">
+            <img src="https://mangasekaishop.com/cdn/shop/files/MANGASEKAISHOP_New_logo_4000_x_4000_px.png?v=1741599617&width=200" alt="Manga Sekai Shop" loading="lazy" width="100" height="100">
+          </div>
+        </div>
+        <div class="footer-block footer-block--contact">
+          <h2 class="footer-block__heading">Fale conosco</h2>
+          <div class="footer-block__content">
+            <p>Estamos aqui para ajudar!<br>Estamos disponíveis</p>
+            <p>Segunda a sexta, 9h às 17h (horário de Brasília)</p>
+            <p>Chat ao vivo</p>
+            <p>E-mail: <a href="mailto:hello@mangasekaishop.com">hello@mangasekaishop.com</a></p>
+          </div>
+        </div>
+        <div class="footer-block footer-block--support">
+          <h2 class="footer-block__heading">Suporte</h2>
+          <ul class="footer-block__menu list-unstyled">
+            <li><a href="#">Termos e condições</a></li>
+            <li><a href="#">Política de privacidade</a></li>
+            <li><a href="#">Política de envio</a></li>
+            <li><a href="#">Política de troca e reembolso</a></li>
+            <li><a href="#">Pesquisar</a></li>
+            <li><a href="#">Contato</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer__social">
+        <a href="https://www.facebook.com/people/Mangasekai-Shop/61570057783762/" class="footer__social-link" aria-label="Facebook">
+          <svg aria-hidden="true" viewBox="0 0 18 18"><path fill="currentColor" d="M16.42.61c.27 0 .5.1.69.28.19.2.28.42.28.7v15.44c0 .27-.1.5-.28.69a.94.94 0 01-.7.28h-4.39v-6.7h2.25l.31-2.65h-2.56v-1.7c0-.4.1-.72.28-.93.18-.2.5-.32 1-.32h1.37V3.35c-.6-.06-1.27-.1-2.01-.1-1.01 0-1.83.3-2.45.9-.62.6-.93 1.44-.93 2.53v1.97H7.04v2.65h2.24V18H.98c-.28 0-.5-.1-.7-.28a.94.94 0 01-.28-.7V1.59c0-.27.1-.5.28-.69a.94.94 0 01.7-.28h15.44z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/mangasekaishop/" class="footer__social-link" aria-label="Instagram">
+          <svg aria-hidden="true" viewBox="0 0 18 18"><path fill="currentColor" d="M8.77 1.58c2.34 0 2.62.01 3.54.05.86.04 1.32.18 1.63.3.41.17.7.35 1.01.66.3.3.5.6.65 1 .12.32.27.78.3 1.64.05.92.06 1.2.06 3.54s-.01 2.62-.05 3.54a4.79 4.79 0 01-.3 1.63c-.17.41-.35.7-.66 1.01-.3.3-.6.5-1.01.66-.31.12-.77.26-1.63.3-.92.04-1.2.05-3.54.05s-2.62 0-3.55-.05a4.79 4.79 0 01-1.62-.3c-.42-.16-.7-.35-1.01-.66-.31-.3-.5-.6-.66-1a4.87 4.87 0 01-.3-1.64c-.04-.92-.05-1.2-.05-3.54s0-2.62.05-3.54c.04-.86.18-1.32.3-1.63.16-.41.35-.7.66-1.01.3-.3.6-.5 1-.65.32-.12.78-.27 1.63-.3.93-.05 1.2-.06 3.55-.06zm0-1.58C6.39 0 6.09.01 5.15.05c-.93.04-1.57.2-2.13.4-.57.23-1.06.54-1.55 1.02C1 1.96.7 2.45.46 3.02c-.22.56-.37 1.2-.4 2.13C0 6.1 0 6.4 0 8.77s.01 2.68.05 3.61c.04.94.2 1.57.4 2.13.23.58.54 1.07 1.02 1.56.49.48.98.78 1.55 1.01.56.22 1.2.37 2.13.4.94.05 1.24.06 3.62.06 2.39 0 2.68-.01 3.62-.05.93-.04 1.57-.2 2.13-.41a4.27 4.27 0 001.55-1.01c.49-.49.79-.98 1.01-1.56.22-.55.37-1.19.41-2.13.04-.93.05-1.23.05-3.61 0-2.39 0-2.68-.05-3.62a6.47 6.47 0 00-.4-2.13 4.27 4.27 0 00-1.02-1.55A4.35 4.35 0 0014.52.46a6.43 6.43 0 00-2.13-.41A69 69 0 008.77 0z"/><path fill="currentColor" d="M8.8 4a4.5 4.5 0 100 9 4.5 4.5 0 000-9zm0 7.43a2.92 2.92 0 110-5.85 2.92 2.92 0 010 5.85zM13.43 5a1.05 1.05 0 100-2.1 1.05 1.05 0 000 2.1z"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="footer__content-bottom">
+      <div class="footer__content-bottom-inner page-width">
+        <div class="footer__payment">
+          <span class="visually-hidden">Formas de pagamento</span>
+          <ul class="footer__payment-list" role="list" id="payment-icons-container"></ul>
+        </div>
+        <div class="footer__copyright">
+          <small>&copy; 2026, <a href="index.html">Manga Sekai Shop</a></small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Popup Promo - Email para ativar desconto -->
+  <div class="popup-promo" id="popup-promo" aria-hidden="true">
+    <div class="popup-promo__backdrop"></div>
+    <div class="popup-promo__box" role="dialog" aria-label="Promoção - informe seu email" aria-modal="true">
+      <button type="button" class="popup-promo__close" id="popup-promo-close" aria-label="Fechar">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+      </button>
+      <div class="popup-promo__top">
+        <img src="assets/popup-promo.png" alt="Oferta para você: Pague 2, ganhe 1. Pague 3, ganhe 2." class="popup-promo__artwork" width="1000" height="auto">
+      </div>
+      <div class="popup-promo__bottom">
+        <p class="popup-promo__message popup-promo__message--first" id="popup-promo-message-first">Ative seu desconto e aproveite ofertas exclusivas!</p>
+        <p class="popup-promo__message popup-promo__message--second" id="popup-promo-message-second" hidden>ATIVE SUA PROMOÇÃO E PAGUE APENAS R$ 37,10 por lightbox</p>
+        <form class="popup-promo__form" id="popup-promo-form" novalidate>
+          <label for="popup-promo-email" class="visually-hidden">Email</label>
+          <input type="email" id="popup-promo-email" name="email" placeholder="Digite seu e-mail" required autocomplete="email" class="popup-promo__input">
+          <button type="submit" class="popup-promo__btn-activate">ATIVAR DESCONTO</button>
+        </form>
+        <button type="button" class="popup-promo__btn-skip" id="popup-promo-skip">Não, obrigado. Prefiro pagar o preço cheio</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="payment-icons.js"></script>
+  <script src="script.js"></script>
+  <script src="cart.js"></script>
+  <script src="offer-countdown-bar.js"></script>
+  <script src="popup-promo.js"></script>
+</body>
+</html>
