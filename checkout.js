@@ -235,15 +235,89 @@
     }
   }
 
+  /** Código de frete: SOMENTE altera #shippingOptions, hidden/display de #shippingHint, #shippingLoading, #shippingOptions */
+  var shippingGuardObserver = null;
+
+  function renderShippingOptionsContent() {
+    var container = document.getElementById('shippingOptions');
+    if (!container) return;
+    container.innerHTML = '<label class="checkout-form__shipping-option"><input type="radio" name="shipping" value="express"><span class="checkout-form__shipping-label"><strong>Entrega Expressa</strong><span class="checkout-form__shipping-days">1 à 3 dias úteis</span></span><span class="checkout-form__shipping-price">R$ 19,90</span></label><label class="checkout-form__shipping-option"><input type="radio" name="shipping" value="free" checked><span class="checkout-form__shipping-label"><strong>Entrega Grátis</strong><span class="checkout-form__shipping-days">3 à 5 dias úteis</span></span><span class="checkout-form__shipping-price checkout-form__shipping-price--free">Grátis</span></label>';
+  }
+
+  function syncShippingUIState() {
+    var stateSelect = document.getElementById('checkout-state');
+    var hintEl = document.getElementById('shippingHint');
+    var loadingEl = document.getElementById('shippingLoading');
+    var optionsEl = document.getElementById('shippingOptions');
+    var stateVal = stateSelect ? (stateSelect.value || '').trim() : '';
+    var freightLoaded = !!stateVal;
+
+    if (!freightLoaded) {
+      if (hintEl) { hintEl.hidden = false; }
+      if (loadingEl) { loadingEl.hidden = true; }
+      if (optionsEl) { optionsEl.hidden = true; }
+    } else {
+      if (hintEl) { hintEl.hidden = true; }
+      if (loadingEl) { loadingEl.hidden = true; }
+      if (optionsEl) {
+        renderShippingOptionsContent();
+        optionsEl.hidden = false;
+      }
+      updateCheckoutShippingAndTotal();
+    }
+  }
+
+  function showShippingLoading() {
+    var hintEl = document.getElementById('shippingHint');
+    var loadingEl = document.getElementById('shippingLoading');
+    var optionsEl = document.getElementById('shippingOptions');
+    if (hintEl) hintEl.hidden = true;
+    if (loadingEl) loadingEl.hidden = false;
+    if (optionsEl) optionsEl.hidden = true;
+  }
+
+  function hideShippingLoading() {
+    var loadingEl = document.getElementById('shippingLoading');
+    if (loadingEl) loadingEl.hidden = true;
+  }
+
+  function startShippingGuard() {
+    var customerFields = document.getElementById('customerFields');
+    if (!customerFields || shippingGuardObserver) return;
+    shippingGuardObserver = new MutationObserver(function (mutations) {
+      if (mutations.length) {
+        console.warn('[shipping] DOM modificado fora de #shippingBlock durante cálculo de frete');
+        console.trace();
+      }
+    });
+    shippingGuardObserver.observe(customerFields, { childList: true, subtree: true, attributes: true, attributeFilter: ['value', 'style', 'class'] });
+  }
+
+  function stopShippingGuard() {
+    if (shippingGuardObserver) {
+      shippingGuardObserver.disconnect();
+      shippingGuardObserver = null;
+    }
+  }
+
+  function showShippingLoadingThenMethods(onDone) {
+    startShippingGuard();
+    showShippingLoading();
+    setTimeout(function () {
+      hideShippingLoading();
+      var optionsEl = document.getElementById('shippingOptions');
+      if (optionsEl) {
+        renderShippingOptionsContent();
+        optionsEl.hidden = false;
+      }
+      updateCheckoutShippingAndTotal();
+      stopShippingGuard();
+      if (typeof onDone === 'function') onDone();
+    }, 1800);
+  }
+
   function renderShippingMethods() {
-    var placeholderText = document.getElementById('checkout-shipping-placeholder-text');
-    var methodsEl = document.getElementById('shippingMethods');
-    var placeholder = document.getElementById('checkout-shipping-placeholder');
-    if (!placeholder) return;
-    placeholder.classList.add('checkout-form__shipping-placeholder--loaded');
-    if (placeholderText) placeholderText.hidden = true;
-    if (methodsEl) methodsEl.hidden = false;
-    updateCheckoutShippingAndTotal();
+    syncShippingUIState();
   }
 
   function maskPhone(input) {
@@ -317,6 +391,214 @@
     document.querySelectorAll('.has-error').forEach(el => el.classList.remove('has-error'));
   }
 
+  function setCheckoutStep(stepNumber) {
+    var container = document.getElementById('checkoutSteps');
+    if (!container || stepNumber < 1 || stepNumber > 3) return;
+    container.setAttribute('data-step', String(stepNumber));
+    var steps = container.querySelectorAll('.step');
+    steps.forEach(function (step, i) {
+      var num = i + 1;
+      step.classList.remove('is-done', 'is-active');
+      step.removeAttribute('aria-current');
+      if (num < stepNumber) step.classList.add('is-done');
+      else if (num === stepNumber) {
+        step.classList.add('is-active');
+        step.setAttribute('aria-current', 'step');
+      }
+    });
+  }
+
+  function goToStep(stepNum) {
+    var stepPersonal = document.getElementById('stepPersonal');
+    var stepDelivery = document.getElementById('stepDelivery');
+    var stepPayment = document.getElementById('stepPayment');
+    if (!stepPersonal || !stepDelivery || !stepPayment) return;
+    setCheckoutStep(stepNum);
+    stepPersonal.classList.toggle('step-checkout__card--active', stepNum === 1);
+    stepPersonal.classList.toggle('step-checkout__card--collapsed', stepNum !== 1);
+    stepPersonal.setAttribute('aria-expanded', stepNum === 1 ? 'true' : 'false');
+    stepPersonal.querySelector('.step-checkout__card-teaser')?.classList.toggle('step-checkout__card-teaser--hidden', stepNum === 1);
+    stepPersonal.querySelector('.step-checkout__card-content')?.classList.toggle('step-checkout__card-content--hidden', stepNum !== 1);
+    if (stepNum === 2) updateStepPersonalSummary();
+    stepDelivery.classList.toggle('step-checkout__card--active', stepNum === 2);
+    stepDelivery.classList.toggle('step-checkout__card--collapsed', stepNum !== 2);
+    stepDelivery.setAttribute('aria-expanded', stepNum === 2 ? 'true' : 'false');
+    stepDelivery.querySelector('.step-checkout__card-teaser')?.classList.toggle('step-checkout__card-teaser--hidden', stepNum === 2);
+    stepDelivery.querySelector('.step-checkout__card-content')?.classList.toggle('step-checkout__card-content--hidden', stepNum !== 2);
+    if (stepNum === 1 || stepNum === 3) updateStepDeliverySummary();
+    if (stepNum === 2) {
+      var btnEscolher = document.getElementById('btnEscolherFrete');
+      var btnCont2 = document.getElementById('btnStep2Continue');
+      if (btnEscolher) { btnEscolher.style.display = ''; btnEscolher.disabled = true; }
+      if (btnCont2) btnCont2.style.display = 'none';
+      checkDeliveryAddressComplete();
+    }
+    stepPayment.classList.toggle('step-checkout__card--active', stepNum === 3);
+    stepPayment.classList.toggle('step-checkout__card--collapsed', stepNum !== 3);
+    stepPayment.setAttribute('aria-expanded', stepNum === 3 ? 'true' : 'false');
+    stepPayment.querySelector('.step-checkout__card-teaser')?.classList.toggle('step-checkout__card-teaser--hidden', stepNum === 3);
+    stepPayment.querySelector('.step-checkout__card-content')?.classList.toggle('step-checkout__card-content--hidden', stepNum !== 3);
+  }
+
+  function validateStep1(formCustomer) {
+    var email = formCustomer?.querySelector('input[name="email"]')?.value?.trim() || '';
+    var phone = formCustomer?.querySelector('input[name="phone"]')?.value?.trim() || '';
+    var firstName = formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || '';
+    var cpf = formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || '';
+    clearErrors();
+    var valid = true;
+    if (!email) { showError('email', 'Email é obrigatório'); valid = false; }
+    else if (!validateEmail(email)) { showError('email', 'Email inválido'); valid = false; }
+    if (!phone) { showError('phone', 'Telefone é obrigatório'); valid = false; }
+    else if (!validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
+    if (!firstName) { showError('firstName', 'Nome é obrigatório'); valid = false; }
+    if (!cpf) { showError('cpf', 'CPF é obrigatório'); valid = false; }
+    else if (!validateCpf(cpf)) { showError('cpf', 'CPF inválido'); valid = false; }
+    return valid;
+  }
+
+  function checkPersonalComplete() {
+    var fn = document.getElementById('checkout-first-name')?.value?.trim() || '';
+    var em = document.getElementById('checkout-email')?.value?.trim() || '';
+    var ph = document.getElementById('checkout-phone')?.value?.trim() || '';
+    var cpf = document.getElementById('checkout-cpf')?.value?.trim() || '';
+    var ok = fn && em && validateEmail(em) && ph && validatePhone(ph) && cpf && validateCpf(cpf);
+    var btn = document.getElementById('btnStep1Continue');
+    if (btn) btn.disabled = !ok;
+  }
+
+  function validateStep2(formShipping) {
+    var postalCode = formShipping?.querySelector('input[name="postalCode"]')?.value?.trim() || '';
+    var address = formShipping?.querySelector('input[name="address"]')?.value?.trim() || '';
+    var addressNumber = formShipping?.querySelector('input[name="addressNumber"]')?.value?.trim() || '';
+    var neighborhood = formShipping?.querySelector('input[name="neighborhood"]')?.value?.trim() || '';
+    var city = formShipping?.querySelector('input[name="city"]')?.value?.trim() || '';
+    var state = formShipping?.querySelector('select[name="state"]')?.value || '';
+    var shippingSelected = formShipping?.querySelector('input[name="shipping"]:checked');
+    clearErrors();
+    var valid = true;
+    if (!postalCode) { showError('postalCode', 'CEP é obrigatório'); valid = false; }
+    else if (postalCode.replace(/\D/g, '').length !== 8) { showError('postalCode', 'CEP deve ter 8 dígitos'); valid = false; }
+    if (!address) { showError('address', 'Endereço é obrigatório'); valid = false; }
+    if (!addressNumber) { showError('addressNumber', 'Número é obrigatório'); valid = false; }
+    if (!neighborhood) { showError('neighborhood', 'Bairro é obrigatório'); valid = false; }
+    if (!city) { showError('city', 'Cidade é obrigatória'); valid = false; }
+    if (!state) { showError('state', 'Estado é obrigatório'); valid = false; }
+    if (!shippingSelected) {
+      alert('Selecione um método de envio antes de continuar.');
+      valid = false;
+    }
+    return valid;
+  }
+
+  function updateStepPersonalSummary() {
+    var fn = document.getElementById('checkout-first-name')?.value?.trim() || '';
+    var em = document.getElementById('checkout-email')?.value?.trim() || '';
+    var ph = document.getElementById('checkout-phone')?.value?.trim() || '';
+    var cpf = document.getElementById('checkout-cpf')?.value?.trim() || '';
+    var nameEl = document.getElementById('summaryName');
+    var emailEl = document.getElementById('summaryEmail');
+    var phoneEl = document.getElementById('summaryPhone');
+    var cpfEl = document.getElementById('summaryCpf');
+    if (nameEl) nameEl.textContent = fn || '—';
+    if (emailEl) emailEl.textContent = em || '—';
+    if (phoneEl) phoneEl.textContent = ph || '—';
+    if (cpfEl) cpfEl.textContent = cpf || '—';
+  }
+
+  function updateStepDeliverySummary() {
+    var address = document.getElementById('checkout-address')?.value?.trim() || '';
+    var number = document.getElementById('checkout-address-number')?.value?.trim() || '';
+    var neighborhood = document.getElementById('checkout-neighborhood')?.value?.trim() || '';
+    var city = document.getElementById('checkout-city')?.value?.trim() || '';
+    var stateVal = document.getElementById('checkout-state')?.value || '';
+    var postalCode = document.getElementById('checkout-postalCode')?.value?.replace(/\D/g, '') || '';
+    var addrEl = document.getElementById('summaryAddress');
+    var neighborhoodCityEl = document.getElementById('summaryNeighborhoodCity');
+    var cepEl = document.getElementById('summaryCep');
+    var hintEl = document.getElementById('stepDeliveryHint');
+    var descEl = document.getElementById('stepDeliveryDesc');
+    var summaryEl = document.getElementById('stepDeliveryDataSummary');
+    var btnEditDelivery = document.getElementById('btnEditDelivery');
+    var hasData = address && number && neighborhood && city && stateVal && postalCode.length === 8;
+    if (hintEl) hintEl.style.display = hasData ? 'none' : '';
+    if (descEl) descEl.style.display = hasData ? '' : 'none';
+    if (summaryEl) summaryEl.style.display = hasData ? '' : 'none';
+    if (btnEditDelivery) btnEditDelivery.style.display = hasData ? '' : 'none';
+    var addrLine = [address, number].filter(Boolean).join(', ') || '—';
+    var cityState = stateVal && city ? city + '/' + stateVal : city || stateVal || '—';
+    var cepFormatted = postalCode.length === 8 ? postalCode : '—';
+    if (addrEl) addrEl.textContent = addrLine;
+    if (neighborhoodCityEl) neighborhoodCityEl.textContent = [neighborhood, cityState].filter(Boolean).join(', ') || '—';
+    if (cepEl) cepEl.textContent = cepFormatted;
+  }
+
+  var cepModalShownAt = 0;
+  function showCepLoadingModal() {
+    cepModalShownAt = Date.now();
+    var modal = document.getElementById('cep-loading-modal');
+    if (modal) { modal.classList.add('is-open'); modal.setAttribute('aria-hidden', 'false'); }
+  }
+  function hideCepLoadingModal() {
+    var minVisible = 2400;
+    var elapsed = Date.now() - cepModalShownAt;
+    var delay = Math.max(0, minVisible - elapsed);
+    var modal = document.getElementById('cep-loading-modal');
+    function close() {
+      if (modal) { modal.classList.remove('is-open'); modal.setAttribute('aria-hidden', 'true'); }
+    }
+    if (delay > 0) setTimeout(close, delay);
+    else close();
+  }
+
+  function fetchCep(cep) {
+    var digits = cep.replace(/\D/g, '');
+    if (digits.length !== 8) return;
+    var statusEl = document.getElementById('cepStatus');
+    if (statusEl) statusEl.textContent = 'Procurando CEP...';
+    showCepLoadingModal();
+    fetch('https://viacep.com.br/ws/' + digits + '/json/')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        hideCepLoadingModal();
+        if (statusEl) statusEl.textContent = '';
+        if (data.erro) {
+          if (statusEl) statusEl.textContent = 'CEP não encontrado';
+          var revealEl = document.getElementById('addressFieldsReveal');
+          if (revealEl) revealEl.setAttribute('hidden', '');
+          return;
+        }
+        var addr = document.getElementById('checkout-address');
+        var neigh = document.getElementById('checkout-neighborhood');
+        var city = document.getElementById('checkout-city');
+        var state = document.getElementById('checkout-state');
+        if (addr) addr.value = data.logradouro || '';
+        if (neigh) neigh.value = data.bairro || '';
+        if (city) city.value = data.localidade || '';
+        if (state) state.value = data.uf || '';
+        var revealEl = document.getElementById('addressFieldsReveal');
+        if (revealEl) { revealEl.removeAttribute('hidden'); }
+        checkDeliveryAddressComplete();
+      })
+      .catch(function () {
+        hideCepLoadingModal();
+        if (statusEl) statusEl.textContent = 'Erro ao buscar';
+        var revealEl = document.getElementById('addressFieldsReveal');
+        if (revealEl) revealEl.setAttribute('hidden', '');
+        checkDeliveryAddressComplete();
+      });
+  }
+
+  function checkDeliveryAddressComplete() {
+    var cep = document.getElementById('checkout-postalCode')?.value?.replace(/\D/g, '') || '';
+    var address = document.getElementById('checkout-address')?.value?.trim() || '';
+    var number = document.getElementById('checkout-address-number')?.value?.trim() || '';
+    var neighborhood = document.getElementById('checkout-neighborhood')?.value?.trim() || '';
+    var btn = document.getElementById('btnEscolherFrete');
+    var complete = cep.length === 8 && address && number && neighborhood;
+    if (btn) { btn.disabled = !complete; }
+  }
+
   function init() {
     var p = new URLSearchParams(window.location.search);
     var hasTracking = p.get('utm_source') || p.get('utm_campaign') || p.get('utm_medium') || p.get('utm_content') || p.get('utm_term') || p.get('src') || p.get('sck');
@@ -341,65 +623,43 @@
     var formCustomer = document.getElementById('formCustomer');
     var formShipping = document.getElementById('formShipping');
 
-    /** [DEBUG] Instrumentação: MutationObserver + value setter para identificar o que altera inputs do cliente após CEP/frete */
-    (function () {
-      window.__cepFetchDone = false;
-      var customerIds = ['checkout-first-name', 'checkout-last-name', 'checkout-email', 'checkout-phone', 'checkout-cpf'];
-      var customerFields = document.getElementById('customerFields');
-      if (customerFields) {
-        var mo = new MutationObserver(function (mutations) {
-          if (mutations.length > 0) {
-            console.warn('[CHECKOUT DEBUG] #customerFields DOM alterado após CEP/frete!', mutations);
-            console.trace('[CHECKOUT DEBUG] Stack:');
-          }
-        });
-        mo.observe(customerFields, { childList: true, subtree: true, attributes: true, characterData: true });
-      }
-      customerIds.forEach(function (id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        try {
-          var proto = Object.getPrototypeOf(el);
-          var desc = Object.getOwnPropertyDescriptor(proto, 'value') || Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value');
-          if (!desc || !desc.set) return;
-          var origSet = desc.set;
-          Object.defineProperty(el, 'value', {
-            get: desc.get,
-            set: function (v) {
-              if (window.__cepFetchDone) {
-                var cur = desc.get ? desc.get.call(this) : this.getAttribute('value');
-                if (String(v) !== String(cur)) {
-                  console.warn('[CHECKOUT DEBUG] Input', id, 'value alterado para', JSON.stringify(v), 'após CEP/frete. Função/arquivo:');
-                  console.trace();
-                }
-              }
-              origSet.call(this, v);
-            },
-            configurable: true,
-            enumerable: true
-          });
-        } catch (e) { console.warn('[CHECKOUT DEBUG] Erro ao instrumentar', id, e); }
-      });
-    })();
+    formCustomer?.querySelector('input[name="phone"]')?.addEventListener('input', function (e) { maskPhone(e.target); checkPersonalComplete(); });
+    formCustomer?.querySelector('input[name="cpf"]')?.addEventListener('input', function (e) { maskCpf(e.target); checkPersonalComplete(); });
+    formCustomer?.addEventListener('input', checkPersonalComplete);
+    formCustomer?.addEventListener('change', checkPersonalComplete);
+    checkPersonalComplete();
 
-    /** Restaura placeholders em Nome, Sobrenome e Nome no cartão - usa getElementById apenas, não roda durante CEP */
-    var placeholderFields = [
-      { id: 'checkout-first-name', placeholder: 'Nome' },
-      { id: 'checkout-last-name', placeholder: 'Sobrenome' },
-      { id: 'checkout-card-name', placeholder: 'Nome no cartão' }
-    ];
-    function restorePlaceholders() {
-      placeholderFields.forEach(function (f) {
-        var input = document.getElementById(f.id);
-        if (!input) return;
-        if (!input.value || !input.value.trim()) {
-          input.value = '';
-          input.setAttribute('placeholder', f.placeholder);
-        }
+    (function syncNamePlaceholder() {
+      var inp = document.getElementById('checkout-first-name');
+      var ph = document.getElementById('checkout-first-name-placeholder');
+      if (!inp || !ph) return;
+      function update() {
+        ph.classList.toggle('is-hidden', (inp.value || '').trim().length > 0);
+      }
+      inp.addEventListener('input', update);
+      inp.addEventListener('change', update);
+      update();
+    })();
+    formShipping?.querySelector('input[name="postalCode"]')?.addEventListener('input', function (e) {
+      maskCep(e.target);
+      var digits = e.target.value.replace(/\D/g, '');
+      if (digits.length === 8) fetchCep(e.target.value);
+    });
+    formShipping?.querySelectorAll('input[name="address"], input[name="addressNumber"], input[name="neighborhood"]').forEach(function (inp) {
+      inp.addEventListener('input', checkDeliveryAddressComplete);
+    });
+    updateStepDeliverySummary();
+
+    document.getElementById('btnEditPersonal')?.addEventListener('click', function () { goToStep(1); });
+    document.getElementById('btnEditDelivery')?.addEventListener('click', function () { goToStep(2); });
+    document.getElementById('btnEscolherFrete')?.addEventListener('click', function () {
+      var btnContinue = document.getElementById('btnStep2Continue');
+      var btnShipping = document.getElementById('btnEscolherFrete');
+      if (btnShipping) btnShipping.style.display = 'none';
+      showShippingLoadingThenMethods(function () {
+        if (btnContinue) btnContinue.style.display = '';
       });
-    }
-    restorePlaceholders();
-    [100, 300].forEach(function (ms) { setTimeout(restorePlaceholders, ms); });
+    });
 
     formShipping?.querySelectorAll('input[name="payment"]').forEach(function (radio) {
       radio.addEventListener('change', function () {
@@ -410,112 +670,28 @@
       if (e.target && e.target.getAttribute('name') === 'shipping') updateCheckoutShippingAndTotal();
     });
 
-    formCustomer?.querySelector('input[name="phone"]')?.addEventListener('input', function (e) { maskPhone(e.target); });
-    formCustomer?.querySelector('input[name="cpf"]')?.addEventListener('input', function (e) { maskCpf(e.target); });
-    var cepUi = document.getElementById('cep_ui');
-    var cepInput = document.getElementById('checkout-cep');
-    var cepOverlay = document.getElementById('checkout-cep-overlay');
-    var isCepFetching = false;
+    (function () {
+      var stateSelect = document.getElementById('checkout-state');
+      syncShippingUIState();
+      stateSelect?.addEventListener('change', function () {
+        var val = stateSelect ? (stateSelect.value || '').trim() : '';
+        if (val) showShippingLoadingThenMethods();
+        else syncShippingUIState();
+      });
+    })();
 
-    function formatCepMask(digits) {
-      if (digits.length <= 5) return digits;
-      return digits.slice(0, 5) + '-' + digits.slice(5, 8);
-    }
-
-    function syncCepUiToProxy() {
-      if (!cepUi || !cepInput) return;
-      var digits = (cepUi.value || '').replace(/\D/g, '').slice(0, 8);
-      var formatted = formatCepMask(digits);
-      cepUi.value = formatted;
-      cepInput.value = digits;
-      if (digits.length === 8 && !isCepFetching) fetchCep(digits);
-    }
-
-    cepUi?.addEventListener('input', function () {
-      syncCepUiToProxy();
-    });
-    cepUi?.addEventListener('paste', function () {
-      setTimeout(syncCepUiToProxy, 0);
-    });
-
-    document.getElementById('checkout-busca-cep')?.addEventListener('click', function () {
-      syncCepUiToProxy();
-      var digits = (cepInput?.value || '').replace(/\D/g, '');
-      if (digits.length !== 8) {
-        showError('postalCode', 'Digite um CEP válido (8 dígitos)');
-        return;
-      }
-      if (!isCepFetching) fetchCep(digits);
-    });
-
-    function showCepOverlay(show) {
-      if (cepOverlay) {
-        if (show) cepOverlay.removeAttribute('hidden');
-        else cepOverlay.setAttribute('hidden', '');
-      }
-    }
-
-    function preserveAddressNumber(currentAddress, newStreet) {
-      if (!currentAddress || !newStreet) return newStreet || '';
-      var match = currentAddress.match(/[,;]\s*(\d[\d\s\-]*)$/);
-      if (match) return (newStreet || '').trim() + ', ' + match[1].trim();
-      match = currentAddress.match(/\s+n[º°.]?\s*(\d[\d\s\-]*)$/i);
-      if (match) return (newStreet || '').trim() + ', ' + match[1].trim();
-      return newStreet || '';
-    }
-
-    function fetchCep(cep) {
-      isCepFetching = true;
-      showCepOverlay(true);
-      var placeholder = document.getElementById('checkout-shipping-placeholder');
-      var placeholderText = document.getElementById('checkout-shipping-placeholder-text');
-      var methodsEl = document.getElementById('shippingMethods');
-      if (placeholder) placeholder.classList.remove('checkout-form__shipping-placeholder--loaded');
-      if (placeholderText) placeholderText.textContent = 'Carregando fretes disponíveis...';
-      if (placeholderText) placeholderText.hidden = false;
-      if (methodsEl) methodsEl.hidden = true;
-      var minDelay = new Promise(function (resolve) { setTimeout(resolve, 2500); });
-      fetch('https://viacep.com.br/ws/' + cep + '/json/')
-        .then(function (r) { return r.json(); })
-        .then(function (data) { return Promise.all([minDelay, data]); })
-        .then(function (result) {
-          var data = result[1];
-          isCepFetching = false;
-          showCepOverlay(false);
-          window.__cepFetchDone = true;
-          if (data.erro) {
-            showError('postalCode', 'CEP não encontrado');
-            if (placeholderText) { placeholderText.textContent = 'Insira seu endereço para ver os métodos de envio disponíveis.'; placeholderText.hidden = false; }
-            if (methodsEl) methodsEl.hidden = true;
-            return;
-          }
-          clearErrors();
-          var addressEl = document.getElementById('checkout-address');
-          var cityEl = document.getElementById('checkout-city');
-          var stateEl = document.getElementById('checkout-state');
-          var logradouro = data.logradouro || '';
-          if (addressEl) {
-            var currentAddr = (addressEl.value || '').trim();
-            addressEl.value = preserveAddressNumber(currentAddr, logradouro);
-          }
-          if (cityEl) cityEl.value = data.localidade || '';
-          if (stateEl) stateEl.value = data.uf || '';
-          if (cepUi) cepUi.focus();
-          renderShippingMethods();
-        })
-        .catch(function () {
-          minDelay.then(function () {
-            isCepFetching = false;
-            showCepOverlay(false);
-            window.__cepFetchDone = true;
-            showError('postalCode', 'Erro ao buscar CEP');
-            if (placeholderText) { placeholderText.textContent = 'Insira seu endereço para ver os métodos de envio disponíveis.'; placeholderText.hidden = false; }
-            if (methodsEl) methodsEl.hidden = true;
-          });
-        });
-    }
     formShipping?.querySelector('input[name="cardNumber"]')?.addEventListener('input', function (e) { maskCardNumber(e.target); });
     formShipping?.querySelector('input[name="cardExpiry"]')?.addEventListener('input', function (e) { maskExpiry(e.target); });
+
+    document.getElementById('btnStep1Continue')?.addEventListener('click', function () {
+      if (validateStep1(formCustomer)) {
+        updateStepPersonalSummary();
+        goToStep(2);
+      }
+    });
+    document.getElementById('btnStep2Continue')?.addEventListener('click', function () {
+      if (validateStep2(formShipping)) goToStep(3);
+    });
 
     document.getElementById('checkout-apply-discount')?.addEventListener('click', () => {
       const input = document.getElementById('checkout-discount-input');
@@ -565,7 +741,6 @@
       var email = formCustomer?.querySelector('input[name="email"]')?.value?.trim() || '';
       var phone = formCustomer?.querySelector('input[name="phone"]')?.value?.trim() || '';
       var firstName = formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || '';
-      var lastName = formCustomer?.querySelector('input[name="last_name"]')?.value?.trim() || '';
       var cpf = formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || '';
       var postalCode = formShipping?.querySelector('input[name="postalCode"]')?.value?.trim() || '';
       var address = formShipping?.querySelector('input[name="address"]')?.value?.trim() || '';
@@ -579,16 +754,20 @@
       if (!phone) { showError('phone', 'Telefone é obrigatório'); valid = false; }
       else if (!validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
       if (!firstName) { showError('firstName', 'Nome é obrigatório'); valid = false; }
-      if (!lastName) { showError('lastName', 'Sobrenome é obrigatório'); valid = false; }
       if (!cpf) { showError('cpf', 'CPF é obrigatório'); valid = false; }
       else if (!validateCpf(cpf)) { showError('cpf', 'CPF inválido'); valid = false; }
+      var addressNumber = formShipping?.querySelector('input[name="addressNumber"]')?.value?.trim() || '';
+      var neighborhood = formShipping?.querySelector('input[name="neighborhood"]')?.value?.trim() || '';
       if (!postalCode) { showError('postalCode', 'CEP é obrigatório'); valid = false; }
+      else if (postalCode.replace(/\D/g, '').length !== 8) { showError('postalCode', 'CEP deve ter 8 dígitos'); valid = false; }
       if (!address) { showError('address', 'Endereço é obrigatório'); valid = false; }
+      if (!addressNumber) { showError('addressNumber', 'Número é obrigatório'); valid = false; }
+      if (!neighborhood) { showError('neighborhood', 'Bairro é obrigatório'); valid = false; }
       if (!city) { showError('city', 'Cidade é obrigatória'); valid = false; }
       if (!state) { showError('state', 'Estado é obrigatório'); valid = false; }
       var shippingSelected = formShipping?.querySelector('input[name="shipping"]:checked');
       if (!shippingSelected) {
-        alert('Informe seu CEP e selecione um método de envio antes de continuar.');
+        alert('Selecione um método de envio antes de continuar.');
         valid = false;
       }
 
@@ -628,7 +807,7 @@
         });
 
         const customer = {
-          name: firstName + ' ' + lastName,
+          name: firstName,
           email: email,
           phone: GATEWAY_PHONE,
           document: { number: cpf.replace(/\D/g, ''), type: 'cpf' }
