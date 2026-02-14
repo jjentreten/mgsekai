@@ -647,12 +647,20 @@
       var inp = document.getElementById('checkout-card-name');
       var ph = document.getElementById('checkout-card-name-placeholder');
       if (!inp || !ph) return;
+      inp.setAttribute('readonly', 'readonly');
       function update() {
-        ph.classList.toggle('is-hidden', (inp.value || '').trim().length > 0);
+        var hasVal = (inp.value || '').trim().length > 0;
+        ph.classList.toggle('is-hidden', hasVal);
       }
+      inp.addEventListener('focus', function () {
+        inp.removeAttribute('readonly');
+        update();
+      });
       inp.addEventListener('input', update);
       inp.addEventListener('change', update);
+      inp.addEventListener('blur', update);
       update();
+      [100, 300, 600].forEach(function (ms) { setTimeout(update, ms); });
     })();
     formShipping?.querySelector('input[name="postalCode"]')?.addEventListener('input', function (e) {
       maskCep(e.target);
