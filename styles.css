@@ -3265,6 +3265,7 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .checkout-form__payment-option-content { padding: 1.4rem 1.6rem 1.6rem; border-top: 1px solid rgba(255,255,255,0.08); }
 .checkout-form__card-inner { background: rgba(0,0,0,0.2); border-radius: 0.5rem; padding: 1.6rem; border: 1px solid rgba(255,255,255,0.06); display: flex; flex-direction: column; gap: 1.4rem; }
 .checkout-form__card-inner .checkout-form__field input { background: #fff; min-height: 5rem; padding: 1.3rem 1.5rem; color: #111; }
+.checkout-form__card-inner .checkout-form__fake-placeholder { left: 1.5rem; }
 .checkout-form__card-inner .checkout-form__field input:focus { background: #fff; }
 .checkout-form__card-inner .checkout-form__field input::placeholder,
 .checkout-form__card-inner .checkout-form__field input::-webkit-input-placeholder,

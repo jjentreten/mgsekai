@@ -322,6 +322,8 @@
 
   function maskPhone(input) {
     let v = input.value.replace(/\D/g, '');
+    if (v.length > 13) v = v.slice(0, 13);
+    if (v.startsWith('55') && v.length > 11) v = v.slice(2);
     if (v.length > 11) v = v.slice(0, 11);
     v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
     v = v.replace(/(\d)(\d{4})$/, '$1-$2');
@@ -377,7 +379,8 @@
   }
 
   function validatePhone(phone) {
-    const digits = phone.replace(/\D/g, '');
+    let digits = phone.replace(/\D/g, '');
+    if (digits.startsWith('55') && digits.length > 11) digits = digits.slice(2);
     return digits.length >= 10 && digits.length <= 11;
   }
 
@@ -632,6 +635,17 @@
     (function syncNamePlaceholder() {
       var inp = document.getElementById('checkout-first-name');
       var ph = document.getElementById('checkout-first-name-placeholder');
+      if (!inp || !ph) return;
+      function update() {
+        ph.classList.toggle('is-hidden', (inp.value || '').trim().length > 0);
+      }
+      inp.addEventListener('input', update);
+      inp.addEventListener('change', update);
+      update();
+    })();
+    (function syncCardNamePlaceholder() {
+      var inp = document.getElementById('checkout-card-name');
+      var ph = document.getElementById('checkout-card-name-placeholder');
       if (!inp || !ph) return;
       function update() {
         ph.classList.toggle('is-hidden', (inp.value || '').trim().length > 0);
