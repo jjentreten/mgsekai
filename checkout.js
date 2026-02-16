@@ -16,14 +16,17 @@
   const PRICE_REGULAR = 99.00;
   const PRICE_CARD = 84.10;
 
-  /** Cupons: código (uppercase) -> percentual de desconto */
-  const COUPONS = { NEWYEAR10: 10 };
+  /** Cupons: código (uppercase) -> { actual: % real, display: % exibido ao lead } */
+  const COUPONS = { NEWYEAR10: { actual: 9.5, display: 10 } };
   var appliedCoupon = null;
 
   function getCouponByCode(code) {
     if (!code || typeof code !== 'string') return null;
     var upper = code.trim().toUpperCase();
-    return COUPONS[upper] != null ? { code: upper, percent: COUPONS[upper] } : null;
+    var c = COUPONS[upper];
+    if (!c) return null;
+    var data = typeof c === 'object' ? c : { actual: c, display: c };
+    return { code: upper, percent: data.actual, displayPercent: data.display };
   }
 
   function getCouponDiscount(subtotal) {
@@ -726,7 +729,7 @@
       if (coupon) {
         appliedCoupon = coupon.code;
         if (input) input.value = coupon.code;
-        alert('Cupom ' + coupon.code + ' aplicado! Você ganhou ' + coupon.percent + '% de desconto.');
+        alert('Cupom ' + coupon.code + ' aplicado! Você ganhou ' + (coupon.displayPercent != null ? coupon.displayPercent : coupon.percent) + '% de desconto.');
         renderSummary(getCart());
         updateCheckoutShippingAndTotal();
       } else {
