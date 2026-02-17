@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Quantico:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" crossorigin="anonymous">
   <link rel="stylesheet" href="styles.css">
   <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck data-utmify-prevent-subids async defer></script>
@@ -104,6 +105,10 @@
                     <span role="cell" id="checkout-savings-value">R$ 0,00</span>
                   </div>
                 </div>
+              </div>
+              <div class="checkout-summary__mp-badge">
+                <span class="checkout-summary__mp-badge-text">Pagamento processado com</span>
+                <img src="https://lojaintegrada.com.br/new-assets/img/mercado-pago-logo.png" alt="Mercado Pago" class="checkout-summary__mp-badge-logo">
               </div>
             </section>
           </div>
@@ -399,13 +404,16 @@
                     <span class="checkout-form__payment-icon checkout-form__payment-icon--pix" aria-hidden="true">
                       <i class="fa-brands fa-pix"></i>
                     </span>
-                    <span class="checkout-form__payment-label">
+                    <span class="checkout-form__pix-with-mp">
                       <span class="checkout-form__payment-name">PIX</span>
-                      <span class="checkout-form__payment-desc">Aprovação instantânea</span>
+                      <span class="checkout-form__pix-mp-text">com</span>
+                      <span class="checkout-form__pix-mp-badge">
+                        <img src="https://lojaintegrada.com.br/new-assets/img/mercado-pago-logo.png" alt="Mercado Pago" class="checkout-form__pix-mp-badge-logo">
+                      </span>
                     </span>
                   </label>
                   <div class="checkout-form__payment-option-content" id="pix-fields">
-                    <p class="checkout-form__pix-info">Você será redirecionado para finalizar o pagamento via PIX. A aprovação é instantânea.</p>
+                    <p class="checkout-form__pix-info">Você será redirecionado para o Mercado Pago para finalizar o pagamento via PIX.</p>
                   </div>
                 </div>
               </div>
@@ -427,6 +435,14 @@
       <div class="cep-loading-modal__content" role="status">
         <span class="cep-loading-modal__spinner" aria-hidden="true"></span>
         <p class="cep-loading-modal__msg">Procurando CEP...</p>
+      </div>
+    </div>
+
+    <!-- Modal de redirecionamento para Mercado Pago -->
+    <div class="checkout-mp-redirect-modal" id="checkout-mp-redirect-modal" aria-hidden="true" aria-live="polite">
+      <div class="checkout-mp-redirect-modal__content">
+        <span class="checkout-mp-redirect-modal__spinner" aria-hidden="true"></span>
+        <p class="checkout-mp-redirect-modal__msg">Redirecionando para o Mercado Pago...</p>
       </div>
     </div>
 

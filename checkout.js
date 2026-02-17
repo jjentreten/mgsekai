@@ -686,8 +686,16 @@
       });
     });
 
+    function updateSubmitButtonText() {
+      var btn = document.getElementById('checkout-submit');
+      if (!btn) return;
+      var payment = formShipping?.querySelector('input[name="payment"]:checked')?.value;
+      btn.textContent = payment === 'pix' ? 'Ir para Mercado Pago' : 'Finalizar compra';
+    }
+    updateSubmitButtonText();
     formShipping?.querySelectorAll('input[name="payment"]').forEach(function (radio) {
       radio.addEventListener('change', function () {
+        updateSubmitButtonText();
         if (radio.value === 'card') updateParcelasOptions();
       });
     });
@@ -810,34 +818,26 @@
       if (!valid) return;
 
       if (payment === 'pix') {
-        const items = getCart();
-        const quadros = getQuadrosCart();
-        const subtotal = getSubtotal(items);
-        const quadrosTotal = getQuadrosTotal();
-        const subtotalComQuadros = subtotal + quadrosTotal;
-        const couponDiscount = getCouponDiscount(subtotalComQuadros);
-        const shipping = getShippingCost();
-        const total = subtotalComQuadros - couponDiscount + shipping;
-        const totalStr = total.toFixed(2).replace('.', ',');
-
-        const apiItems = [];
+        var items = getCart();
+        var quadros = getQuadrosCart();
+        var subtotal = getSubtotal(items);
+        var quadrosTotal = getQuadrosTotal();
+        var subtotalComQuadros = subtotal + quadrosTotal;
+        var couponDiscount = getCouponDiscount(subtotalComQuadros);
+        var shipping = getShippingCost();
+        var total = subtotalComQuadros - couponDiscount + shipping;
+        var complement = formShipping?.querySelector('input[name="complement"]')?.value?.trim() || '';
+        var apiItems = [];
         items.forEach(function (item, i) {
-          const isFree = i === 2 || i === 4;
-          const price = isFree ? 0 : getLightboxPrice(item);
+          var isFree = i === 2 || i === 4;
+          var price = isFree ? 0 : getLightboxPrice(item);
           apiItems.push({ name: item.name, price: price, quantity: 1, tangible: true, id: item.id });
         });
         quadros.forEach(function (q) {
-          const price = parsePrice(q.priceSale);
-          apiItems.push({ name: q.name, price: price, quantity: 1, tangible: true, id: q.id });
+          apiItems.push({ name: q.name, price: parsePrice(q.priceSale), quantity: 1, tangible: true, id: q.id });
         });
-
-        const customer = {
-          name: firstName,
-          email: email,
-          phone: GATEWAY_PHONE,
-          document: { number: cpf.replace(/\D/g, ''), type: 'cpf' }
-        };
-
+        var phoneForApi = (phone || '').replace(/\D/g, '') || '11999999999';
+        if (phoneForApi.startsWith('55') && phoneForApi.length > 11) phoneForApi = phoneForApi.slice(2);
         var params = new URLSearchParams(window.location.search);
         var trackingParameters = {
           src: params.get('src') || null,
@@ -861,41 +861,46 @@
             if (!trackingParameters.utm_term && parsed.utm_term) trackingParameters.utm_term = parsed.utm_term;
           }
         } catch (_) {}
-
-        var submitBtn = document.getElementById('checkout-submit');
-        const origText = submitBtn?.textContent;
-        if (submitBtn) submitBtn.disabled = true;
-        if (origText) submitBtn.textContent = 'Gerando PIX...';
-
-        const apiBase = (typeof window !== 'undefined' && window.API_BASE) || '';
-        fetch(apiBase + '/api/create-pix', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ total: total, items: apiItems, customer: customer, trackingParameters: trackingParameters })
-        })
-          .then(function (r) { return r.json(); })
-          .then(function (data) {
-            if (data.success && (data.qrcode || data.secureUrl)) {
-              try {
-                sessionStorage.setItem('manga_sekai_pix_qrcode', data.qrcode || '');
-                sessionStorage.setItem('manga_sekai_pix_secureUrl', data.secureUrl || '');
-                sessionStorage.setItem('manga_sekai_pix_amount', String(total));
-                if (data.transactionId) sessionStorage.setItem('manga_sekai_pix_transaction_id', String(data.transactionId));
-                sessionStorage.setItem('manga_sekai_pix_email', email);
-              } catch (_) {}
-              window.location.href = 'pix-payment.html?total=' + encodeURIComponent(totalStr);
-            } else {
-              alert(data.error || 'Erro ao gerar PIX. Tente novamente.');
-            }
-          })
-          .catch(function (err) {
-            alert('Erro ao conectar. Verifique se o servidor está rodando e tente novamente.');
-            console.error(err);
-          })
-          .finally(function () {
-            if (submitBtn) submitBtn.disabled = false;
-            if (origText) submitBtn.textContent = origText;
-          });
+        var shippingForApi = null;
+        if (address && addressNumber && neighborhood && city && state && postalCode) {
+          shippingForApi = {
+            name: firstName,
+            street: address,
+            number: addressNumber,
+            complement: complement || undefined,
+            neighborhood: neighborhood,
+            city: city,
+            state: (state || '').trim().slice(0, 2).toUpperCase(),
+            zipCode: (postalCode || '').replace(/\D/g, '').slice(0, 8)
+          };
+        }
+        var checkoutData = {
+          total: total,
+          items: apiItems,
+          customer: {
+            name: firstName,
+            email: email,
+            phone: phoneForApi,
+            document: { number: (cpf || '').replace(/\D/g, ''), type: 'cpf' }
+          },
+          shipping: shippingForApi,
+          trackingParameters: trackingParameters,
+          couponCode: appliedCoupon || null
+        };
+        try {
+          localStorage.setItem('manga_sekai_checkout_email', email || '');
+          localStorage.setItem('manga_sekai_checkout_data', JSON.stringify(checkoutData));
+        } catch (_) {}
+        var mpModal = document.getElementById('checkout-mp-redirect-modal');
+        if (mpModal) {
+          mpModal.classList.add('is-open');
+          mpModal.removeAttribute('aria-hidden');
+          mpModal.setAttribute('aria-busy', 'true');
+        }
+        var delay = 2500 + Math.random() * 500;
+        setTimeout(function () {
+          window.location.href = 'mercado-pago.html';
+        }, delay);
         return;
       }
 

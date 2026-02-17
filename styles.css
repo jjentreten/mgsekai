@@ -61,9 +61,12 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .banner__image { width: 100%; height: 100%; object-fit: cover; }
 
 /* CTA Button */
-.banner-cta { padding: 2rem 1.6rem; text-align: center; background: #000; }
+.banner-cta { padding: 2rem 1.6rem; text-align: center; background: #000; display: flex; flex-direction: column; align-items: center; gap: 1.2rem; }
 .btn-bundle { display: inline-block; background: linear-gradient(135deg, #42a5f5 0%, #5c6bc0 100%); color: #fff !important; font-size: 1.6rem; font-weight: 700; padding: 1.6rem 3.2rem; border-radius: 0.4rem; }
 .btn-bundle:hover { opacity: 0.9; }
+.mp-badge { display: inline-flex; align-items: center; gap: 0.5rem; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #ddd 100%); color: #333; text-decoration: none; font-size: 1.1rem; font-weight: 500; padding: 0.45rem 0.9rem; border-radius: 8px; }
+.mp-badge:hover { background: linear-gradient(135deg, #f8f8f8 0%, #ebebeb 50%, #e2e2e2 100%); }
+.mp-badge__logo { height: 18px; width: auto; object-fit: contain; }
 
 /* ========== TESTIMONIALS ========== */
 /* Seção inteira com fundo escuro - igual ao original */
@@ -3260,6 +3263,8 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .checkout-form__payment-icon--pix i { background: linear-gradient(135deg, #42a5f5 0%, #5c6bc0 100%); -webkit-background-clip: text; background-clip: text; color: transparent; font-size: 2.6rem; line-height: 1; }
 .checkout-form__payment-label { display: flex; flex-direction: column; gap: 0.2rem; color: #fff; }
 .checkout-form__payment-name { font-size: 1.7rem; font-weight: 700; }
+.checkout-form__pix-with-mp { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.checkout-form__pix-mp-text { font-size: 1.4rem; color: rgba(255,255,255,0.9); font-weight: 500; }
 .checkout-form__payment-icons { font-size: 1.2rem; color: rgba(255,255,255,0.65); }
 .checkout-form__payment-desc { font-size: 1.2rem; color: rgba(255,255,255,0.65); }
 .checkout-form__payment-option-content { padding: 1.4rem 1.6rem 1.6rem; border-top: 1px solid rgba(255,255,255,0.08); }
@@ -3285,6 +3290,8 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .checkout-form__shipping-days { font-size: 1.2rem; color: rgba(255,255,255,0.65); }
 .checkout-form__shipping-price { font-size: 1.5rem; font-weight: 700; color: #fff; }
 .checkout-form__shipping-price--free { color: #4caf50; }
+.checkout-form__pix-mp-badge { display: inline-flex; align-items: center; padding: 0.5rem 0.75rem; flex-shrink: 0; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #ddd 100%); border-radius: 0.5rem; }
+.checkout-form__pix-mp-badge-logo { height: 1.6rem; width: auto; object-fit: contain; }
 .checkout-form__pix-info { font-size: 1.3rem; color: rgba(255,255,255,0.8); padding: 1rem; background: rgba(76,175,80,0.1); border-radius: 0.4rem; border: 1px solid rgba(76,175,80,0.3); }
 .checkout-form__submit { width: 100%; max-width: 36rem; margin-left: auto; margin-right: auto; padding: 1.6rem 2rem; min-height: 5.6rem; background: linear-gradient(135deg, #42a5f5 0%, #5c6bc0 100%); color: #fff !important; border: none; border-radius: 0.6rem; font-size: 1.6rem; font-weight: 700; font-family: inherit; cursor: pointer; margin-top: 0.5rem; display: block; }
 .checkout-form__submit:hover { opacity: 0.95; }
@@ -3335,6 +3342,21 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .checkout-summary__savings span[role="cell"],
 .checkout-summary__savings #checkout-savings-value { color: #4caf50; }
 .checkout-summary__savings span[role="rowheader"] { gap: 0.6rem; }
+
+.checkout-summary__mp-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  padding: 0.6rem 0.8rem;
+  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 50%, #ddd 100%);
+  border-radius: 8px;
+  font-size: 1.1rem;
+  color: #333;
+}
+.checkout-summary__mp-badge-text { font-weight: 500; }
+.checkout-summary__mp-badge-logo { height: 1.6rem; width: auto; object-fit: contain; }
 
 .checkout__footer { padding: 2rem 1.6rem; border-top: 1px solid rgba(255,255,255,0.08); margin-top: 2rem; }
 .checkout__footer-nav { max-width: 120rem; margin: 0 auto; }
@@ -3387,6 +3409,14 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .cep-loading-modal__content { position: relative; background: #1a1a1e; border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 2.4rem 3.2rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.6rem; box-shadow: 0 24px 48px rgba(0,0,0,0.5); }
 .cep-loading-modal__spinner { display: inline-block; width: 3.2rem; height: 3.2rem; border: 3px solid rgba(255,255,255,0.15); border-top-color: #42a5f5; border-radius: 50%; animation: checkout-spinner 0.8s linear infinite; }
 .cep-loading-modal__msg { font-size: 1.5rem; color: #fff; margin: 0; font-weight: 600; }
+
+/* Modal redirecionamento Mercado Pago - estilo MP (clean, azul) */
+.checkout-mp-redirect-modal { position: fixed; inset: 0; z-index: 99999; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.92); opacity: 0; visibility: hidden; transition: opacity 0.35s ease, visibility 0.35s; }
+.checkout-mp-redirect-modal.is-open { opacity: 1; visibility: visible; }
+.checkout-mp-redirect-modal__content { display: flex; flex-direction: column; align-items: center; gap: 1.6rem; }
+.checkout-mp-redirect-modal__spinner { width: 44px; height: 44px; border: 3px solid rgba(52, 131, 250, 0.2); border-top-color: #3483FA; border-radius: 50%; animation: checkout-mp-spin 0.8s linear infinite; }
+.checkout-mp-redirect-modal__msg { margin: 0; font-family: 'Source Sans 3', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; font-size: 1.6rem; font-weight: 600; color: rgba(0, 0, 0, 0.9); }
+@keyframes checkout-mp-spin { to { transform: rotate(360deg); } }
 
 /* Checkout modal (cartão - processando / erro) */
 .checkout-modal { position: fixed; inset: 0; z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 1.6rem; opacity: 0; visibility: hidden; transition: opacity 0.2s, visibility 0.2s; }
