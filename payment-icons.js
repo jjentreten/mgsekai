@@ -27,8 +27,9 @@ const PAYMENT_ICONS = [
   {
     id: 'mastercard',
     name: 'Mastercard',
-    type: 'cdn',
-    url: 'https://www.svgrepo.com/show/452059/mastercard.svg',
+    type: 'svg',
+    svg: '<circle fill="#EB001B" cx="18" cy="12" r="8"/><circle fill="#F79E1B" cx="30" cy="12" r="8"/><path fill="#FF5F00" d="M24 6.5a8 8 0 0 0 0 11 8 8 0 0 0 0-11z"/>',
+    viewBox: '0 0 48 24',
     width: 38,
     height: 24,
   },
