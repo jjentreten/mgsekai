@@ -58,7 +58,7 @@
         </div>
         <div class="detail-card__info">
           <p class="detail-card__line1" id="amount-text">Você pagou no Pix</p>
-          <p class="detail-card__line2">R$ 196,86</p>
+          <p class="detail-card__line2" id="approved-amount">R$ 0,00</p>
           <p class="detail-card__line3">O pagamento foi aprovado na hora.</p>
         </div>
       </div>
@@ -89,10 +89,16 @@
     (function() {
       var operationId = "73575065607";
       var amountText = "Você pagou no Pix";
-      var amountValue = "R$ 196,86";
+      var amount = 0;
+      try {
+        var stored = sessionStorage.getItem('manga_sekai_pix_amount');
+        if (stored) amount = parseFloat(String(stored).replace(',', '.')) || 0;
+      } catch (_) {}
+      var amountValue = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(amount);
 
       document.getElementById('operation-id').textContent = "Operação #" + operationId;
       document.getElementById('amount-text').textContent = amountText;
+      document.getElementById('approved-amount').textContent = amountValue;
     })();
   </script>
 </body>
