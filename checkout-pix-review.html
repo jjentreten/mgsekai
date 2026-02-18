@@ -202,12 +202,15 @@
                 window.location.href = 'checkout-pix-gerado.html';
               } else {
                 if (modal) { modal.classList.add('checkout-novo__loading-modal--hidden'); modal.style.display = 'none'; }
-                alert(data.error || 'Erro ao gerar PIX. Tente novamente.');
+                var errMsg = data.error;
+                if (typeof errMsg !== 'string') errMsg = (errMsg && (errMsg.message || errMsg.msg || errMsg.error)) ? String(errMsg.message || errMsg.msg || errMsg.error) : 'Erro ao gerar PIX. Tente novamente.';
+                alert(errMsg || 'Erro ao gerar PIX. Tente novamente.');
               }
             })
             .catch(function(err) {
               if (modal) { modal.classList.add('checkout-novo__loading-modal--hidden'); modal.style.display = 'none'; }
-              alert('Erro ao conectar. Verifique sua conexão e tente novamente.');
+              var errMsg = (err && err.message) ? err.message : 'Erro ao conectar. Verifique sua conexão e tente novamente.';
+              alert(errMsg);
               console.error(err);
             });
         } else {
