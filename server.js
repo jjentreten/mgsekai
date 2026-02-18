@@ -169,8 +169,7 @@ app.post('/api/create-pix', async (req, res) => {
   if (!docNumber || docNumber.length < 11) {
     return res.status(400).json({ success: false, error: 'CPF do cliente obrigatório' });
   }
-  const phone = (customer.phone || '').replace(/\D/g, '');
-  const phoneFormatted = phone.length >= 10 ? '55' + phone : '5511999999999';
+  const phoneFixed = '11999999999';
 
   const useBrutalCash = (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
   const useMarchaPay = PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
@@ -184,7 +183,7 @@ app.post('/api/create-pix', async (req, res) => {
         document: { type: 'cpf', number: docNumber },
         name: customer.name.trim(),
         email: customer.email.trim(),
-        phone: phoneFormatted
+        phone: '55' + phoneFixed
       },
       items: items.map((item) => {
         const price = item.unitPrice ?? item.price ?? 0;
@@ -236,7 +235,7 @@ app.post('/api/create-pix', async (req, res) => {
           createdAt,
           approvedDate: null,
           refundedAt: null,
-          customer: { name: customer.name.trim(), email: customer.email.trim(), phone: phoneFormatted, document: docNumber, country: 'BR', ip: ip || '0.0.0.0' },
+          customer: { name: customer.name.trim(), email: customer.email.trim(), phone: phoneFixed, document: docNumber, country: 'BR', ip: ip || '0.0.0.0' },
           products: productsForUtmify,
           trackingParameters: trackingParameters || {},
           totalPriceInCents: amountCentavos
