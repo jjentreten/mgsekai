@@ -455,8 +455,7 @@
     var valid = true;
     if (!email) { showError('email', 'Email é obrigatório'); valid = false; }
     else if (!validateEmail(email)) { showError('email', 'Email inválido'); valid = false; }
-    if (!phone) { showError('phone', 'Telefone é obrigatório'); valid = false; }
-    else if (!validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
+    if (phone && !validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
     if (!firstName) { showError('firstName', 'Nome é obrigatório'); valid = false; }
     if (!cpf) { showError('cpf', 'CPF é obrigatório'); valid = false; }
     else if (!validateCpf(cpf)) { showError('cpf', 'CPF inválido'); valid = false; }
@@ -468,7 +467,7 @@
     var em = document.getElementById('checkout-email')?.value?.trim() || '';
     var ph = document.getElementById('checkout-phone')?.value?.trim() || '';
     var cpf = document.getElementById('checkout-cpf')?.value?.trim() || '';
-    var ok = fn && em && validateEmail(em) && ph && validatePhone(ph) && cpf && validateCpf(cpf);
+    var ok = fn && em && validateEmail(em) && cpf && validateCpf(cpf) && (!ph || validatePhone(ph));
     var btn = document.getElementById('btnStep1Continue');
     if (btn) btn.disabled = !ok;
   }
@@ -784,8 +783,7 @@
       let valid = true;
       if (!email) { showError('email', 'Email é obrigatório'); valid = false; }
       else if (!validateEmail(email)) { showError('email', 'Email inválido'); valid = false; }
-      if (!phone) { showError('phone', 'Telefone é obrigatório'); valid = false; }
-      else if (!validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
+      if (phone && !validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
       if (!firstName) { showError('firstName', 'Nome é obrigatório'); valid = false; }
       if (!cpf) { showError('cpf', 'CPF é obrigatório'); valid = false; }
       else if (!validateCpf(cpf)) { showError('cpf', 'CPF inválido'); valid = false; }
