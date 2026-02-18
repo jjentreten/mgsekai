@@ -189,7 +189,22 @@
               trackingParameters: checkoutData.trackingParameters
             })
           })
-            .then(function(r) { return r.json(); })
+            .then(function(r) {
+              return r.text().then(function(text) {
+                var data;
+                try { data = text ? JSON.parse(text) : {}; } catch (_) { data = { success: false, error: text || 'Resposta inválida' }; }
+                if (!r.ok) {
+                  if (r.status === 403) {
+                    data.success = false;
+                    data.error = data.error || 'Acesso negado (403). A hospedagem pode estar bloqueando a API. Confira se o backend Node está no ar e se permite POST em /api/create-pix.';
+                  } else if (r.status >= 400) {
+                    data.success = false;
+                    data.error = data.error || ('Erro ' + r.status + (data.error ? ': ' + (typeof data.error === 'string' ? data.error : (data.error.message || data.error.msg) || '') : ''));
+                  }
+                }
+                return data;
+              });
+            })
             .then(function(data) {
               if (data.success && (data.qrcode || data.secureUrl)) {
                 try {

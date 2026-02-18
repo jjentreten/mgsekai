@@ -1,6 +1,6 @@
 /**
  * Backend Manga Sekai Shop
- * Serve arquivos estáticos, Marcha Pay PIX e Utmify (trackeamento)
+ * Serve arquivos estáticos, PIX (BrutalCash ativo / Marcha Pay legado) e Utmify (trackeamento)
  */
 require('dotenv').config();
 const express = require('express');
@@ -10,11 +10,21 @@ const fs = require('fs');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const PIX_PROVIDER = (process.env.PIX_PROVIDER || 'brutalcash').toLowerCase();
+
+// BrutalCash (ativo por padrão)
+const BRUTALCASH_PUBLIC_KEY = (process.env.BRUTALCASH_PUBLIC_KEY || '').trim();
+const BRUTALCASH_SECRET_KEY = (process.env.BRUTALCASH_SECRET_KEY || '').trim();
+const BRUTALCASH_CREATE_URL = 'https://api.brutalcash.com/v1/payment-transaction/create';
+const BRUTALCASH_GET_URL = 'https://api.brutalcash.com/v1/payment-transaction';
+
+// Marcha Pay (legado – desativado por padrão; usar PIX_PROVIDER=marchapay para ativar)
 const MARCHABB_URL = 'https://api.marchabb.com/v1/transactions';
 const MARCHABB_GET_URL = 'https://api.marchabb.com/v1/transactions';
-const UTMIFY_URL = 'https://api.utmify.com.br/api-credentials/orders';
 const PUBLIC_KEY = process.env.MARCHABB_PUBLIC_KEY || '';
 const SECRET_KEY = process.env.MARCHABB_SECRET_KEY || '';
+
+const UTMIFY_URL = 'https://api.utmify.com.br/api-credentials/orders';
 const UTMIFY_TOKEN = (process.env.UTMIFY_API_TOKEN || '').trim();
 const SITE_URL = (process.env.SITE_URL || 'http://localhost:' + PORT).replace(/\/$/, '');
 const PENDING_ORDERS_FILE = path.join(__dirname, 'data', 'pending-utmify-orders.json');
@@ -138,18 +148,10 @@ async function sendToUtmify(payload) {
 // Servir arquivos estáticos
 app.use(express.static(path.join(__dirname)));
 
-// POST /api/create-pix - Cria transação PIX na Marcha Pay
+// POST /api/create-pix - Cria transação PIX (BrutalCash ou Marcha Pay conforme PIX_PROVIDER)
 app.post('/api/create-pix', async (req, res) => {
-  if (!PUBLIC_KEY || !SECRET_KEY) {
-    return res.status(500).json({
-      success: false,
-      error: 'Chaves da API Marcha Pay não configuradas. Configure MARCHABB_PUBLIC_KEY e MARCHABB_SECRET_KEY no .env'
-    });
-  }
-
   const { amount, total, items, customer, trackingParameters } = req.body;
 
-  // Aceita amount em centavos OU total em reais
   let amountCentavos = typeof amount === 'number' ? Math.round(amount) : 0;
   if (amountCentavos < 1 && typeof total === 'number') {
     amountCentavos = Math.round(total * 100);
@@ -157,184 +159,257 @@ app.post('/api/create-pix', async (req, res) => {
   if (amountCentavos < 1) {
     return res.status(400).json({ success: false, error: 'Valor inválido (amount ou total)' });
   }
-
   if (!items || !Array.isArray(items) || items.length === 0) {
     return res.status(400).json({ success: false, error: 'Lista de itens obrigatória' });
   }
-
   if (!customer || !customer.name || !customer.email) {
     return res.status(400).json({ success: false, error: 'Cliente obrigatório (name, email)' });
   }
-
-  // Formatar CPF (só números)
   const docNumber = (customer.document?.number || '').replace(/\D/g, '');
   if (!docNumber || docNumber.length < 11) {
     return res.status(400).json({ success: false, error: 'CPF do cliente obrigatório' });
   }
+  const phone = (customer.phone || '').replace(/\D/g, '');
+  const phoneFormatted = phone.length >= 10 ? '55' + phone : '5511999999999';
 
-  // Telefone sempre fixo na gateway: (11) 99999-9999
-  const phone = '11999999999';
+  const useBrutalCash = (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
+  const useMarchaPay = PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
 
-  const payload = {
-    amount: amountCentavos,
-    currency: 'BRL',
-    paymentMethod: 'pix',
-    items: items.map((item) => {
-      const price = item.unitPrice ?? item.price ?? 0;
-      const unitPrice = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
-      return {
-        title: item.title || item.name || 'Produto',
-        unitPrice,
-        quantity: item.quantity || 1,
-        tangible: item.tangible !== false,
-        externalRef: item.externalRef || item.id
-      };
-    }),
-    customer: {
-      name: customer.name.trim(),
-      email: customer.email.trim(),
-      phone,
-      document: {
-        number: docNumber,
-        type: customer.document?.type || 'cpf'
-      }
-    },
-    externalRef: 'ms-' + Date.now()
-  };
-
-  // postbackUrl e returnUrl opcionais
-  if (SITE_URL) {
-    payload.postbackUrl = SITE_URL + '/api/webhook-pix';
-    payload.returnUrl = SITE_URL + '/pix-payment.html?status=return';
-  }
-
-  const auth = 'Basic ' + Buffer.from(PUBLIC_KEY + ':' + SECRET_KEY).toString('base64');
-
-  try {
-    const response = await fetch(MARCHABB_URL, {
-      method: 'POST',
-      headers: {
-        'Authorization': auth,
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+  if (useBrutalCash) {
+    // --- BrutalCash ---
+    const auth = 'Basic ' + Buffer.from(BRUTALCASH_PUBLIC_KEY + ':' + BRUTALCASH_SECRET_KEY).toString('base64');
+    const payload = {
+      payment_method: 'pix',
+      customer: {
+        document: { type: 'cpf', number: docNumber },
+        name: customer.name.trim(),
+        email: customer.email.trim(),
+        phone: phoneFormatted
       },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return res.status(response.status).json({
-        success: false,
-        error: data.message || data.error || 'Erro ao criar transação PIX'
-      });
-    }
-
-    const pix = data.pix || data.data?.pix;
-    const secureUrl = data.secureUrl || data.data?.secureUrl;
-    const qrcode = pix?.qrcode || pix?.copyPaste;
-
-    if (!qrcode && !secureUrl) {
-      return res.status(500).json({
-        success: false,
-        error: 'Resposta da Marcha Pay sem QR Code PIX'
-      });
-    }
-
-    const transactionId = data.id ?? data.data?.id ?? data.objectId;
-    const createdAt = toUtcDateTime(new Date());
-
-    if (!UTMIFY_TOKEN) {
-      console.warn('Utmify: configure UTMIFY_API_TOKEN no .env para enviar pedidos');
-    }
-    if (transactionId == null) {
-      console.warn('Utmify: ID da transação Marcha não encontrado na resposta. Resposta:', JSON.stringify(data).slice(0, 200));
-    }
-
-    if (UTMIFY_TOKEN && transactionId != null) {
-      const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '0.0.0.0';
-      const ip = clientIp.replace(/^::ffff:/, '');
-      console.log('Enviando pedido', transactionId, 'para Utmify (waiting_payment)...');
-      const productsForUtmify = (items || []).map((item) => {
+      items: items.map((item) => {
         const price = item.unitPrice ?? item.price ?? 0;
-        const priceInCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+        const unitPriceCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
         return {
-          id: item.id || item.externalRef,
-          name: item.name || item.title || 'Produto',
-          quantity: item.quantity || 1,
-          priceInCents
+          title: item.title || item.name || 'Produto',
+          unit_price: unitPriceCents,
+          quantity: item.quantity || 1
         };
-      });
-      const utmifyPayload = buildUtmifyPayload({
-        orderId: String(transactionId),
-        status: 'waiting_payment',
-        createdAt,
-        approvedDate: null,
-        refundedAt: null,
-        customer: {
-          name: customer.name.trim(),
-          email: customer.email.trim(),
-          phone: phone || null,
-          document: docNumber,
-          country: 'BR',
-          ip
+      }),
+      amount: amountCentavos,
+      postback_url: SITE_URL ? SITE_URL + '/api/webhook-brutalcash' : undefined,
+      metadata: { provider_name: 'Manga Sekai' }
+    };
+    try {
+      const response = await fetch(BRUTALCASH_CREATE_URL, {
+        method: 'POST',
+        headers: {
+          'Authorization': auth,
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
-        products: productsForUtmify,
-        trackingParameters: trackingParameters || {},
-        totalPriceInCents: amountCentavos
+        body: JSON.stringify(payload)
       });
-      await sendToUtmify(utmifyPayload);
-      const pending = readPendingOrders();
-      pending.push({
-        transactionId: String(transactionId),
-        createdAt,
-        utmifyPayload
-      });
-      writePendingOrders(pending);
+      const raw = await response.json();
+      const inner = raw.response || raw;
+      const data = inner.data || inner;
+      if (raw.isError || !inner.success || !data) {
+        const errMsg = (inner.error_messages && inner.error_messages[0]) || inner.inner_exception || raw.message || 'Erro ao criar PIX';
+        return res.status(response.ok ? 500 : response.status).json({ success: false, error: String(errMsg) });
+      }
+      const qrcode = data.pix?.qr_code || data.pix?.qrcode || '';
+      const transactionId = data.id;
+      if (!qrcode) {
+        return res.status(500).json({ success: false, error: 'Resposta BrutalCash sem QR Code PIX' });
+      }
+      const createdAt = toUtcDateTime(new Date());
+      if (UTMIFY_TOKEN && transactionId) {
+        const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '0.0.0.0';
+        const ip = clientIp.replace(/^::ffff:/, '');
+        const productsForUtmify = items.map((item) => {
+          const price = item.unitPrice ?? item.price ?? 0;
+          const priceInCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+          return { id: item.id || item.externalRef, name: item.name || item.title || 'Produto', quantity: item.quantity || 1, priceInCents };
+        });
+        const utmifyPayload = buildUtmifyPayload({
+          orderId: String(transactionId),
+          status: 'waiting_payment',
+          createdAt,
+          approvedDate: null,
+          refundedAt: null,
+          customer: { name: customer.name.trim(), email: customer.email.trim(), phone: phoneFormatted, document: docNumber, country: 'BR', ip: ip || '0.0.0.0' },
+          products: productsForUtmify,
+          trackingParameters: trackingParameters || {},
+          totalPriceInCents: amountCentavos
+        });
+        await sendToUtmify(utmifyPayload);
+        const pending = readPendingOrders();
+        pending.push({ transactionId: String(transactionId), createdAt, utmifyPayload, provider: 'brutalcash' });
+        writePendingOrders(pending);
+      }
+      return res.json({ success: true, transactionId, secureUrl: null, qrcode, amount: amountCentavos });
+    } catch (err) {
+      console.error('Erro BrutalCash:', err);
+      return res.status(500).json({ success: false, error: err.message || 'Erro ao conectar com o gateway de pagamento' });
     }
-
-    res.json({
-      success: true,
-      transactionId,
-      secureUrl,
-      qrcode: qrcode || '',
-      amount: payload.amount
-    });
-  } catch (err) {
-    console.error('Erro Marcha Pay:', err);
-    res.status(500).json({
-      success: false,
-      error: err.message || 'Erro ao conectar com o gateway de pagamento'
-    });
   }
+
+  if (useMarchaPay) {
+    // --- Marcha Pay (legado) ---
+    const payload = {
+      amount: amountCentavos,
+      currency: 'BRL',
+      paymentMethod: 'pix',
+      items: items.map((item) => {
+        const price = item.unitPrice ?? item.price ?? 0;
+        const unitPrice = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+        return {
+          title: item.title || item.name || 'Produto',
+          unitPrice,
+          quantity: item.quantity || 1,
+          tangible: item.tangible !== false,
+          externalRef: item.externalRef || item.id
+        };
+      }),
+      customer: {
+        name: customer.name.trim(),
+        email: customer.email.trim(),
+        phone: '11999999999',
+        document: { number: docNumber, type: customer.document?.type || 'cpf' }
+      },
+      externalRef: 'ms-' + Date.now()
+    };
+    if (SITE_URL) {
+      payload.postbackUrl = SITE_URL + '/api/webhook-pix';
+      payload.returnUrl = SITE_URL + '/pix-payment.html?status=return';
+    }
+    const auth = 'Basic ' + Buffer.from(PUBLIC_KEY + ':' + SECRET_KEY).toString('base64');
+    try {
+      const response = await fetch(MARCHABB_URL, {
+        method: 'POST',
+        headers: { 'Authorization': auth, 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        return res.status(response.status).json({ success: false, error: data.message || data.error || 'Erro ao criar transação PIX' });
+      }
+      const pix = data.pix || data.data?.pix;
+      const secureUrl = data.secureUrl || data.data?.secureUrl;
+      const qrcode = pix?.qrcode || pix?.copyPaste || '';
+      const transactionId = data.id ?? data.data?.id ?? data.objectId;
+      if (!qrcode && !secureUrl) {
+        return res.status(500).json({ success: false, error: 'Resposta da Marcha Pay sem QR Code PIX' });
+      }
+      const createdAt = toUtcDateTime(new Date());
+      if (UTMIFY_TOKEN && transactionId != null) {
+        const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '0.0.0.0';
+        const ip = clientIp.replace(/^::ffff:/, '');
+        const productsForUtmify = items.map((item) => {
+          const price = item.unitPrice ?? item.price ?? 0;
+          const priceInCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+          return { id: item.id || item.externalRef, name: item.name || item.title || 'Produto', quantity: item.quantity || 1, priceInCents };
+        });
+        const utmifyPayload = buildUtmifyPayload({
+          orderId: String(transactionId),
+          status: 'waiting_payment',
+          createdAt,
+          approvedDate: null,
+          refundedAt: null,
+          customer: { name: customer.name.trim(), email: customer.email.trim(), phone: '11999999999', document: docNumber, country: 'BR', ip },
+          products: productsForUtmify,
+          trackingParameters: trackingParameters || {},
+          totalPriceInCents: amountCentavos
+        });
+        await sendToUtmify(utmifyPayload);
+        const pending = readPendingOrders();
+        pending.push({ transactionId: String(transactionId), createdAt, utmifyPayload });
+        writePendingOrders(pending);
+      }
+      return res.json({ success: true, transactionId, secureUrl, qrcode: qrcode || '', amount: payload.amount });
+    } catch (err) {
+      console.error('Erro Marcha Pay:', err);
+      return res.status(500).json({ success: false, error: err.message || 'Erro ao conectar com o gateway de pagamento' });
+    }
+  }
+
+  return res.status(500).json({
+    success: false,
+    error: 'Nenhum gateway PIX configurado. Defina PIX_PROVIDER=brutalcash e BRUTALCASH_PUBLIC_KEY/SECRET_KEY no .env (ou PIX_PROVIDER=marchapay com MARCHABB_*).'
+  });
 });
 
-// POST /api/webhook-pix - Recebe postbacks da Marcha Pay (opcional, para atualizar status)
+// POST /api/webhook-brutalcash - Recebe postbacks da BrutalCash (atualização de transação)
+app.post('/api/webhook-brutalcash', (req, res) => {
+  const body = req.body;
+  const id = body.Id || body.id;
+  const status = (body.Status || body.status || '').toUpperCase();
+  console.log('Webhook BrutalCash:', id, status);
+  if (status === 'PAID' && id) {
+    const pending = readPendingOrders();
+    const idx = pending.findIndex((p) => String(p.transactionId) === String(id) && p.provider === 'brutalcash');
+    if (idx !== -1) {
+      const row = pending[idx];
+      const approvedDate = body.PaidAt ? toUtcDateTime(new Date(body.PaidAt)) : toUtcDateTime(new Date());
+      const payload = { ...row.utmifyPayload, status: 'paid', approvedDate };
+      sendToUtmify(payload).then(() => {
+        pending.splice(idx, 1);
+        writePendingOrders(pending);
+        console.log('Utmify atualizado (webhook BrutalCash): pedido', id, 'pago');
+      });
+    }
+  }
+  res.status(200).send('OK');
+});
+
+// POST /api/webhook-pix - Recebe postbacks da Marcha Pay (legado; só usado com PIX_PROVIDER=marchapay)
 app.post('/api/webhook-pix', (req, res) => {
   const body = req.body;
   console.log('Webhook Marcha Pay:', body?.type, body?.objectId, body?.data?.status);
   res.status(200).send('OK');
 });
 
-// GET /api/pix-status/:transactionId - Consulta status da transação (para polling na página PIX)
+// GET /api/pix-status/:transactionId - Consulta status (BrutalCash ou Marcha Pay)
 app.get('/api/pix-status/:transactionId', async (req, res) => {
   const { transactionId } = req.params;
-  if (!transactionId || !PUBLIC_KEY || !SECRET_KEY) {
-    return res.status(400).json({ status: 'unknown' });
+  if (!transactionId) return res.status(400).json({ status: 'unknown' });
+
+  const useBrutalCash = (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
+  const useMarchaPay = PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
+
+  if (useBrutalCash) {
+    try {
+      const auth = 'Basic ' + Buffer.from(BRUTALCASH_PUBLIC_KEY + ':' + BRUTALCASH_SECRET_KEY).toString('base64');
+      const response = await fetch(BRUTALCASH_GET_URL + '/' + encodeURIComponent(transactionId), {
+        method: 'GET',
+        headers: { 'Authorization': auth, 'Accept': 'application/json' }
+      });
+      const raw = response.ok ? await response.json() : null;
+      const data = raw?.response?.data || raw?.data || raw;
+      const status = (data?.status || data?.Status || 'unknown').toUpperCase();
+      return res.json({ status: status === 'PAID' ? 'paid' : 'pending' });
+    } catch (err) {
+      console.error('pix-status BrutalCash:', err.message);
+      return res.status(500).json({ status: 'unknown' });
+    }
   }
-  try {
-    const auth = 'Basic ' + Buffer.from(PUBLIC_KEY + ':' + SECRET_KEY).toString('base64');
-    const response = await fetch(MARCHABB_GET_URL + '/' + encodeURIComponent(transactionId), {
-      method: 'GET',
-      headers: { 'Authorization': auth, 'Accept': 'application/json' }
-    });
-    const data = response.ok ? await response.json() : null;
-    const status = data?.status ?? data?.data?.status ?? 'unknown';
-    res.json({ status: status === 'paid' || status === 'approved' ? 'paid' : 'pending' });
-  } catch (err) {
-    console.error('pix-status:', err.message);
-    res.status(500).json({ status: 'unknown' });
+
+  if (useMarchaPay) {
+    try {
+      const auth = 'Basic ' + Buffer.from(PUBLIC_KEY + ':' + SECRET_KEY).toString('base64');
+      const response = await fetch(MARCHABB_GET_URL + '/' + encodeURIComponent(transactionId), {
+        method: 'GET',
+        headers: { 'Authorization': auth, 'Accept': 'application/json' }
+      });
+      const data = response.ok ? await response.json() : null;
+      const status = data?.status ?? data?.data?.status ?? 'unknown';
+      return res.json({ status: status === 'paid' || status === 'approved' ? 'paid' : 'pending' });
+    } catch (err) {
+      console.error('pix-status Marcha:', err.message);
+      return res.status(500).json({ status: 'unknown' });
+    }
   }
+
+  res.json({ status: 'unknown' });
 });
 
 // Fallback: servir index.html para SPA se necessário
@@ -342,10 +417,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// Polling: verificar transações pendentes na Marcha Pay e atualizar Utmify quando paid
+// Polling: verificar transações pendentes (apenas Marcha Pay; BrutalCash usa webhook)
 async function pollMarchaAndUpdateUtmify() {
-  if (!PUBLIC_KEY || !SECRET_KEY || !UTMIFY_TOKEN) return;
-  const pending = readPendingOrders();
+  if (PIX_PROVIDER !== 'marchapay' || !PUBLIC_KEY || !SECRET_KEY || !UTMIFY_TOKEN) return;
+  const pending = readPendingOrders().filter((p) => !p.provider || p.provider === 'marchapay');
   if (pending.length === 0) return;
 
   const auth = 'Basic ' + Buffer.from(PUBLIC_KEY + ':' + SECRET_KEY).toString('base64');
@@ -376,7 +451,9 @@ async function pollMarchaAndUpdateUtmify() {
   }
 
   if (stillPending.length !== pending.length) {
-    writePendingOrders(stillPending);
+    const all = readPendingOrders();
+    const brutalOnly = all.filter((p) => p.provider === 'brutalcash');
+    writePendingOrders([...brutalOnly, ...stillPending]);
   }
 }
 
@@ -389,12 +466,19 @@ function startPolling() {
 
 app.listen(PORT, () => {
   console.log('Manga Sekai Shop rodando em http://localhost:' + PORT);
-  if (!PUBLIC_KEY || !SECRET_KEY) {
-    console.warn('AVISO: Chaves Marcha Pay não configuradas. Copie .env.example para .env e preencha as chaves.');
+  const useBrutal = (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
+  const useMarcha = PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
+  if (useBrutal) {
+    console.log('PIX: BrutalCash ativo.');
+  } else if (useMarcha) {
+    console.log('PIX: Marcha Pay ativo (legado).');
+    if (UTMIFY_TOKEN) startPolling();
+  } else {
+    console.warn('AVISO: Nenhum gateway PIX ativo. Configure PIX_PROVIDER=brutalcash e BRUTALCASH_* no .env (ou marchapay com MARCHABB_*).');
   }
   if (UTMIFY_TOKEN) {
     console.log('Utmify: token configurado - pedidos serão enviados ao painel.');
-    startPolling();
+    if (PIX_PROVIDER === 'marchapay') startPolling();
   } else {
     console.warn('AVISO: UTMIFY_API_TOKEN não configurado no .env. Trackeamento Utmify desativado.');
   }
