@@ -576,6 +576,32 @@
     else close();
   }
 
+  function applyCepToForm(data) {
+    var addr = document.getElementById('checkout-address');
+    var neigh = document.getElementById('checkout-neighborhood');
+    var city = document.getElementById('checkout-city');
+    var state = document.getElementById('checkout-state');
+    var street = data.street || data.logradouro || '';
+    var neighborhood = data.neighborhood || data.bairro || '';
+    var cityName = data.city || data.localidade || '';
+    var stateUf = data.state || data.uf || '';
+    if (addr) addr.value = street;
+    if (neigh) neigh.value = neighborhood;
+    if (city) city.value = cityName;
+    if (state) state.value = stateUf;
+    var revealEl = document.getElementById('addressFieldsReveal');
+    if (revealEl) revealEl.removeAttribute('hidden');
+    checkDeliveryAddressComplete();
+    runProtectPhoneAndLog();
+  }
+
+  function showCepNotFound(statusEl) {
+    if (statusEl) statusEl.textContent = 'CEP não encontrado';
+    var revealEl = document.getElementById('addressFieldsReveal');
+    if (revealEl) revealEl.setAttribute('hidden', '');
+    runProtectPhoneAndLog();
+  }
+
   function fetchCep(cep) {
     var digitsCep = digitsOnly(cep);
     if (digitsCep.length !== 8) return;
@@ -587,39 +613,53 @@
     var statusEl = document.getElementById('cepStatus');
     if (statusEl) statusEl.textContent = 'Procurando CEP...';
     showCepLoadingModal();
-    fetch('https://viacep.com.br/ws/' + digitsCep + '/json/')
-      .then(function (r) { return r.json(); })
+
+    function onSuccess(data) {
+      hideCepLoadingModal();
+      if (statusEl) statusEl.textContent = '';
+      if (data.erro) {
+        showCepNotFound(statusEl);
+        return;
+      }
+      applyCepToForm(data);
+    }
+
+    function onError() {
+      hideCepLoadingModal();
+      if (statusEl) statusEl.textContent = 'Erro ao buscar';
+      var revealEl = document.getElementById('addressFieldsReveal');
+      if (revealEl) revealEl.setAttribute('hidden', '');
+      checkDeliveryAddressComplete();
+      runProtectPhoneAndLog();
+    }
+
+    // BrasilAPI (multi-provider, incl. fallback) — primary
+    fetch('https://brasilapi.com.br/api/cep/v1/' + digitsCep)
+      .then(function (r) {
+        if (r.ok) return r.json();
+        if (r.status === 404) return null;
+        throw new Error('BrasilAPI error');
+      })
       .then(function (data) {
-        hideCepLoadingModal();
-        if (statusEl) statusEl.textContent = '';
-        if (data.erro) {
-          if (statusEl) statusEl.textContent = 'CEP não encontrado';
-          var revealEl = document.getElementById('addressFieldsReveal');
-          if (revealEl) revealEl.setAttribute('hidden', '');
-          runProtectPhoneAndLog();
+        if (data) {
+          onSuccess(data);
           return;
         }
-        // ViaCEP: alterar SOMENTE estes campos (nunca #phone, #email, #first_name, #last_name, #cpf)
-        var addr = document.getElementById('checkout-address');
-        var neigh = document.getElementById('checkout-neighborhood');
-        var city = document.getElementById('checkout-city');
-        var state = document.getElementById('checkout-state');
-        if (addr) addr.value = data.logradouro || '';
-        if (neigh) neigh.value = data.bairro || '';
-        if (city) city.value = data.localidade || '';
-        if (state) state.value = data.uf || '';
-        var revealEl = document.getElementById('addressFieldsReveal');
-        if (revealEl) { revealEl.removeAttribute('hidden'); }
-        checkDeliveryAddressComplete();
-        runProtectPhoneAndLog();
+        // Fallback: ViaCEP
+        return fetch('https://viacep.com.br/ws/' + digitsCep + '/json/').then(function (r) { return r.json(); });
+      })
+      .then(function (data) {
+        if (!data) return;
+        if (data.erro) {
+          hideCepLoadingModal();
+          if (statusEl) statusEl.textContent = 'CEP não encontrado';
+          showCepNotFound(statusEl);
+          return;
+        }
+        onSuccess(data);
       })
       .catch(function () {
-        hideCepLoadingModal();
-        if (statusEl) statusEl.textContent = 'Erro ao buscar';
-        var revealEl = document.getElementById('addressFieldsReveal');
-        if (revealEl) revealEl.setAttribute('hidden', '');
-        checkDeliveryAddressComplete();
-        runProtectPhoneAndLog();
+        onError();
       });
   }
 
