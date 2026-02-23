@@ -3226,6 +3226,14 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .checkout-form__field input::placeholder,
 .checkout-form__field input::-webkit-input-placeholder,
 .checkout-form__field input::-moz-placeholder { color: #757575; opacity: 1; }
+.checkout-form__field.has-value input::placeholder,
+.checkout-form__field.has-value input::-webkit-input-placeholder,
+.checkout-form__field.has-value input::-moz-placeholder { opacity: 0; }
+.checkout-form__field input:not(:placeholder-shown)::placeholder { opacity: 0; }
+.checkout-form__field input { animation-name: onAutoFillCancel; animation-duration: 0.01s; }
+.checkout-form__field input:-webkit-autofill { animation-name: onAutoFillStart; animation-duration: 0.01s; }
+@keyframes onAutoFillStart { from {} to {} }
+@keyframes onAutoFillCancel { from {} to {} }
 .checkout-form__input-wrap--placeholder { position: relative; display: block; }
 .checkout-form__input-wrap--placeholder input { width: 100%; }
 .checkout-form__fake-placeholder { position: absolute; left: 1.6rem; top: 50%; transform: translateY(-50%); color: #757575; font-size: 16px; font-family: inherit; pointer-events: none; white-space: nowrap; transition: opacity 0.15s; }

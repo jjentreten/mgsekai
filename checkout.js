@@ -324,8 +324,8 @@
   }
 
   function maskPhone(input) {
-    let v = input.value.replace(/\D/g, '');
-    if (v.length > 13) v = v.slice(0, 13);
+    if (!input) return;
+    let v = digitsOnly(input.value);
     if (v.startsWith('55') && v.length > 11) v = v.slice(2);
     if (v.length > 11) v = v.slice(0, 11);
     v = v.replace(/^(\d{2})(\d)/g, '($1) $2');
@@ -381,10 +381,14 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   }
 
+  function digitsOnly(val) {
+    return (val || '').replace(/\D/g, '');
+  }
+
   function validatePhone(phone) {
-    let digits = phone.replace(/\D/g, '');
-    if (digits.startsWith('55') && digits.length > 11) digits = digits.slice(2);
-    return digits.length >= 10 && digits.length <= 11;
+    let d = digitsOnly(phone);
+    if (d.startsWith('55') && d.length > 11) d = d.slice(2);
+    return d.length >= 10 && d.length <= 11;
   }
 
   function showError(field, msg) {
@@ -448,14 +452,17 @@
 
   function validateStep1(formCustomer) {
     var email = formCustomer?.querySelector('input[name="email"]')?.value?.trim() || '';
-    var phone = formCustomer?.querySelector('input[name="phone"]')?.value?.trim() || '';
+    var phoneInput = document.getElementById('checkout-phone');
+    var phoneDigits = phoneInput ? digitsOnly(phoneInput.value) : '';
+    var phone = phoneInput ? phoneInput.value.trim() : '';
     var firstName = formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || '';
     var cpf = formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || '';
     clearErrors();
     var valid = true;
     if (!email) { showError('email', 'Email é obrigatório'); valid = false; }
     else if (!validateEmail(email)) { showError('email', 'Email inválido'); valid = false; }
-    if (phone && !validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
+    if (phoneDigits.length > 0 && phoneDigits.length < 10) { showError('phone', 'Telefone inválido (mín. 10 dígitos)'); valid = false; }
+    else if (phone && !validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
     if (!firstName) { showError('firstName', 'Nome é obrigatório'); valid = false; }
     if (!cpf) { showError('cpf', 'CPF é obrigatório'); valid = false; }
     else if (!validateCpf(cpf)) { showError('cpf', 'CPF inválido'); valid = false; }
@@ -539,6 +546,19 @@
   }
 
   var cepModalShownAt = 0;
+  var phoneSnapshotBeforeCep = '';
+
+  function protectPhoneAfterCep() {
+    var phoneEl = document.getElementById('checkout-phone');
+    if (!phoneEl) return;
+    var cur = digitsOnly(phoneEl.value);
+    if (phoneSnapshotBeforeCep !== '' && cur !== phoneSnapshotBeforeCep) {
+      phoneEl.value = phoneSnapshotBeforeCep;
+      maskPhone(phoneEl);
+      console.warn('Phone altered after CEP fill – restored from snapshot', new Error().stack);
+    }
+  }
+
   function showCepLoadingModal() {
     cepModalShownAt = Date.now();
     var modal = document.getElementById('cep-loading-modal');
@@ -557,12 +577,17 @@
   }
 
   function fetchCep(cep) {
-    var digits = cep.replace(/\D/g, '');
-    if (digits.length !== 8) return;
+    var digitsCep = digitsOnly(cep);
+    if (digitsCep.length !== 8) return;
+    // Não usar innerHTML/replaceWith/outerHTML no form nem form.reset() durante o CEP.
+
+    var phoneEl = document.getElementById('checkout-phone');
+    phoneSnapshotBeforeCep = phoneEl ? digitsOnly(phoneEl.value) : '';
+
     var statusEl = document.getElementById('cepStatus');
     if (statusEl) statusEl.textContent = 'Procurando CEP...';
     showCepLoadingModal();
-    fetch('https://viacep.com.br/ws/' + digits + '/json/')
+    fetch('https://viacep.com.br/ws/' + digitsCep + '/json/')
       .then(function (r) { return r.json(); })
       .then(function (data) {
         hideCepLoadingModal();
@@ -571,8 +596,10 @@
           if (statusEl) statusEl.textContent = 'CEP não encontrado';
           var revealEl = document.getElementById('addressFieldsReveal');
           if (revealEl) revealEl.setAttribute('hidden', '');
+          runProtectPhoneAndLog();
           return;
         }
+        // ViaCEP: alterar SOMENTE estes campos (nunca #phone, #email, #first_name, #last_name, #cpf)
         var addr = document.getElementById('checkout-address');
         var neigh = document.getElementById('checkout-neighborhood');
         var city = document.getElementById('checkout-city');
@@ -584,6 +611,7 @@
         var revealEl = document.getElementById('addressFieldsReveal');
         if (revealEl) { revealEl.removeAttribute('hidden'); }
         checkDeliveryAddressComplete();
+        runProtectPhoneAndLog();
       })
       .catch(function () {
         hideCepLoadingModal();
@@ -591,7 +619,20 @@
         var revealEl = document.getElementById('addressFieldsReveal');
         if (revealEl) revealEl.setAttribute('hidden', '');
         checkDeliveryAddressComplete();
+        runProtectPhoneAndLog();
       });
+  }
+
+  function runProtectPhoneAndLog() {
+    var phoneEl = document.getElementById('checkout-phone');
+    var after = phoneEl ? digitsOnly(phoneEl.value) : '';
+    console.log('phone before/after CEP', phoneSnapshotBeforeCep, after);
+    if (phoneSnapshotBeforeCep !== '' && after !== phoneSnapshotBeforeCep) {
+      console.warn('Phone altered after CEP fill', new Error().stack);
+    }
+    protectPhoneAfterCep();
+    setTimeout(protectPhoneAfterCep, 0);
+    setTimeout(protectPhoneAfterCep, 150);
   }
 
   function checkDeliveryAddressComplete() {
@@ -602,6 +643,28 @@
     var btn = document.getElementById('btnEscolherFrete');
     var complete = cep.length === 8 && address && number && neighborhood;
     if (btn) { btn.disabled = !complete; }
+  }
+
+  var AUTOFILL_SYNC_INPUT_IDS = ['checkout-first-name', 'checkout-email', 'checkout-phone'];
+
+  function syncPlaceholdersAndHasValue() {
+    AUTOFILL_SYNC_INPUT_IDS.forEach(function (id) {
+      var input = document.getElementById(id);
+      if (!input) return;
+      var wrapper = input.closest('.checkout-form__field') || input.closest('.checkout-form__input-wrap') || input.parentElement;
+      var hasValue = (input.value || '').trim().length > 0;
+      if (id === 'checkout-first-name') {
+        var fakePh = document.getElementById('checkout-first-name-placeholder');
+        if (fakePh) fakePh.classList.toggle('is-hidden', hasValue);
+      } else {
+        if (!input.hasAttribute('data-placeholder')) input.setAttribute('data-placeholder', input.placeholder || '');
+        input.placeholder = hasValue ? '' : (input.getAttribute('data-placeholder') || '');
+      }
+      if (wrapper) {
+        if (hasValue) wrapper.classList.add('has-value');
+        else wrapper.classList.remove('has-value');
+      }
+    });
   }
 
   function init() {
@@ -628,7 +691,34 @@
     var formCustomer = document.getElementById('formCustomer');
     var formShipping = document.getElementById('formShipping');
 
-    formCustomer?.querySelector('input[name="phone"]')?.addEventListener('input', function (e) { maskPhone(e.target); checkPersonalComplete(); });
+    [0, 100, 300, 800].forEach(function (ms) { setTimeout(syncPlaceholdersAndHasValue, ms); });
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', syncPlaceholdersAndHasValue);
+      window.addEventListener('load', syncPlaceholdersAndHasValue);
+    } else {
+      syncPlaceholdersAndHasValue();
+    }
+    document.addEventListener('animationstart', function (e) {
+      if (e.animationName === 'onAutoFillStart' || e.animationName === 'onAutoFillCancel') syncPlaceholdersAndHasValue();
+    }, true);
+    AUTOFILL_SYNC_INPUT_IDS.forEach(function (id) {
+      var input = document.getElementById(id);
+      if (input) {
+        input.addEventListener('input', syncPlaceholdersAndHasValue);
+        input.addEventListener('change', syncPlaceholdersAndHasValue);
+        input.addEventListener('blur', syncPlaceholdersAndHasValue);
+      }
+    });
+
+    formCustomer?.querySelector('input[name="phone"]')?.addEventListener('input', function (e) {
+      var el = e.target;
+      maskPhone(el);
+      phoneSnapshotBeforeCep = digitsOnly(el.value);
+      checkPersonalComplete();
+    });
+    formCustomer?.querySelector('input[name="phone"]')?.addEventListener('change', function (e) {
+      phoneSnapshotBeforeCep = digitsOnly(e.target.value);
+    });
     formCustomer?.querySelector('input[name="cpf"]')?.addEventListener('input', function (e) { maskCpf(e.target); checkPersonalComplete(); });
     formCustomer?.addEventListener('input', checkPersonalComplete);
     formCustomer?.addEventListener('change', checkPersonalComplete);
@@ -771,7 +861,9 @@
       clearErrors();
 
       var email = formCustomer?.querySelector('input[name="email"]')?.value?.trim() || '';
-      var phone = formCustomer?.querySelector('input[name="phone"]')?.value?.trim() || '';
+      var phoneElSubmit = document.getElementById('checkout-phone');
+      var phoneRawSubmit = phoneElSubmit ? digitsOnly(phoneElSubmit.value) : '';
+      var phone = phoneElSubmit ? phoneElSubmit.value.trim() : '';
       var firstName = formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || '';
       var cpf = formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || '';
       var postalCode = formShipping?.querySelector('input[name="postalCode"]')?.value?.trim() || '';
@@ -783,7 +875,8 @@
       let valid = true;
       if (!email) { showError('email', 'Email é obrigatório'); valid = false; }
       else if (!validateEmail(email)) { showError('email', 'Email inválido'); valid = false; }
-      if (phone && !validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
+      if (phoneRawSubmit.length > 0 && phoneRawSubmit.length < 10) { showError('phone', 'Telefone inválido (mín. 10 dígitos)'); valid = false; }
+      else if (phone && !validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
       if (!firstName) { showError('firstName', 'Nome é obrigatório'); valid = false; }
       if (!cpf) { showError('cpf', 'CPF é obrigatório'); valid = false; }
       else if (!validateCpf(cpf)) { showError('cpf', 'CPF inválido'); valid = false; }
@@ -834,7 +927,7 @@
         quadros.forEach(function (q) {
           apiItems.push({ name: q.name, price: parsePrice(q.priceSale), quantity: 1, tangible: true, id: q.id });
         });
-        var phoneForApi = (phone || '').replace(/\D/g, '') || '11999999999';
+        var phoneForApi = phoneRawSubmit.length >= 10 ? phoneRawSubmit : '11999999999';
         if (phoneForApi.startsWith('55') && phoneForApi.length > 11) phoneForApi = phoneForApi.slice(2);
         var params = new URLSearchParams(window.location.search);
         var trackingParameters = {
