@@ -915,8 +915,7 @@
       let valid = true;
       if (!email) { showError('email', 'Email é obrigatório'); valid = false; }
       else if (!validateEmail(email)) { showError('email', 'Email inválido'); valid = false; }
-      if (phoneRawSubmit.length > 0 && phoneRawSubmit.length < 10) { showError('phone', 'Telefone inválido (mín. 10 dígitos)'); valid = false; }
-      else if (phone && !validatePhone(phone)) { showError('phone', 'Telefone inválido'); valid = false; }
+      /* Telefone não é obrigatório aqui: gateway recebe número padrão. Obrigatório só no step Dados Pessoais (Continuar). */
       if (!firstName) { showError('firstName', 'Nome é obrigatório'); valid = false; }
       if (!cpf) { showError('cpf', 'CPF é obrigatório'); valid = false; }
       else if (!validateCpf(cpf)) { showError('cpf', 'CPF inválido'); valid = false; }
