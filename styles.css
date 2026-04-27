@@ -3256,8 +3256,8 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .checkout-form__field select option { background: #fff; color: #111; }
 .checkout-form__field.has-error input,
 .checkout-form__field.has-error select { border-color: #e53935; background: #fff5f5; }
-.checkout-form__input-wrap { position: relative; display: flex; }
-.checkout-form__input-wrap input { flex: 1; padding-right: 4.4rem; }
+.checkout-form__input-wrap { position: relative; display: flex; width: 100%; min-width: 0; }
+.checkout-form__input-wrap input { flex: 1; min-width: 0; padding-right: 4.4rem; }
 .checkout-form__cep-proxy { position: absolute; left: -9999px; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; padding: 0; }
 .checkout-form__cep-btn { position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%); padding: 0.5rem; color: rgba(0,0,0,0.5); background: transparent; border: none; cursor: pointer; }
 .checkout-form__cep-btn:hover { color: #e53935; }
@@ -3285,15 +3285,35 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .checkout-form__pix-mp-text { font-size: 1.4rem; color: #333; font-weight: 500; }
 .checkout-form__payment-icons { font-size: 1.2rem; color: #666; }
 .checkout-form__payment-desc { font-size: 1.2rem; color: #666; }
-.checkout-form__payment-option-content { padding: 1.4rem 1.6rem 1.6rem; border-top: 1px solid rgba(0,0,0,0.08); }
-.checkout-form__card-inner { background: #f0f0f0; border-radius: 0.5rem; padding: 1.6rem; border: 1px solid rgba(0,0,0,0.08); display: flex; flex-direction: column; gap: 1.4rem; }
-.checkout-form__card-inner .checkout-form__field input { background: #fff; min-height: 5rem; padding: 1.3rem 1.5rem; color: #111; }
-.checkout-form__card-inner .checkout-form__fake-placeholder { left: 1.5rem; }
-.checkout-form__card-inner .checkout-form__field input:focus { background: #fff; }
+.checkout-form__payment-option-content { padding: 1.2rem 1.4rem 1.4rem; border-top: 1px solid rgba(0,0,0,0.08); }
+.checkout-form__card-inner { background: #fff; border-radius: 1rem; padding: 1.8rem; border: 1px solid #e3e3e3; box-shadow: 0 2px 12px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 1.4rem; }
+
+/* Bandeiras */
+.cc-brands { display: flex; gap: 0.6rem; align-items: center; }
+.cc-brand { display: inline-flex; border-radius: 4px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.15); flex-shrink: 0; }
+.cc-brand svg { display: block; width: 40px; height: 26px; }
+
+/* Label acima dos campos */
+.cc-label { display: block; font-size: 1.1rem; font-weight: 600; color: #555; margin-bottom: 0.5rem; letter-spacing: 0.02em; text-transform: uppercase; }
+
+/* Validade/CVV — flex side-by-side, nunca colapsa */
+.cc-expiry-cvv-row { display: flex; gap: 1.2rem; align-items: flex-start; }
+.cc-expiry-cvv-row > .checkout-form__field { min-width: 0; flex-shrink: 1; }
+.cc-expiry-cvv-row > .checkout-form__field:first-child { flex: 3; }
+.cc-expiry-cvv-row > .checkout-form__field:last-child { flex: 2; }
+
+/* Inputs dentro do card form */
+.checkout-form__card-inner .checkout-form__field input { width: 100%; background-color: #fafafa; min-height: 4.8rem; padding: 1.2rem 1.4rem; color: #111; border: 1.5px solid #d8d8d8; border-radius: 0.7rem; font-size: 16px; transition: border-color 0.18s, box-shadow 0.18s; }
+.checkout-form__card-inner .checkout-form__field select { width: 100%; background-color: #fafafa; min-height: 4.8rem; padding: 1.2rem 3.6rem 1.2rem 1.4rem; color: #111; border: 1.5px solid #d8d8d8; border-radius: 0.7rem; font-size: 16px; transition: border-color 0.18s, box-shadow 0.18s; }
+.checkout-form__card-inner .checkout-form__field input:focus,
+.checkout-form__card-inner .checkout-form__field select:focus { border-color: #e53935; box-shadow: 0 0 0 3px rgba(229,57,53,0.12); background-color: #fff; outline: none; }
 .checkout-form__card-inner .checkout-form__field input::placeholder,
 .checkout-form__card-inner .checkout-form__field input::-webkit-input-placeholder,
-.checkout-form__card-inner .checkout-form__field input::-moz-placeholder { color: #757575; opacity: 1; }
-.checkout-form__checkbox--billing { margin-top: 1rem; }
+.checkout-form__card-inner .checkout-form__field input::-moz-placeholder { color: #bbb; opacity: 1; }
+.checkout-form__card-inner .checkout-form__fake-placeholder { left: 1.6rem; color: #bbb; font-size: 16px; }
+.checkout-form__card-inner .checkout-form__field.has-error input,
+.checkout-form__card-inner .checkout-form__field.has-error select { border-color: #e53935; background: #fff5f5; }
+.checkout-form__checkbox--billing { margin-top: 0.2rem; }
 .checkout-form__add-tip { margin-top: 1.6rem; padding: 1.2rem; background: #f8f8f8; border-radius: 0.5rem; border: 1px solid rgba(0,0,0,0.08); }
 .shipping-block__hint { font-size: 1.4rem; color: #555; margin: 0 0 1rem; line-height: 1.5; }
 .shipping-block__options { display: flex; flex-direction: column; gap: 1rem; }

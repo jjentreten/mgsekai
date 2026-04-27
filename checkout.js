@@ -14,7 +14,6 @@
   const EXTRA_MS = EXTRA_MINUTES * 60 * 1000;
   const PRICE_SALE = 37.10;
   const PRICE_REGULAR = 99.00;
-  const PRICE_CARD = 84.10;
 
   /** Cupons: código (uppercase) -> { actual: % real, display: % exibido ao lead } */
   const COUPONS = { NEWYEAR10: { actual: 9.5, display: 10 } };
@@ -94,14 +93,6 @@
     return sum - getPromoDiscount(items);
   }
 
-  function getCardSubtotal(items) {
-    if (items.length === 0) return 0;
-    const total = items.length;
-    let discount = 0;
-    if (total >= 3) discount += PRICE_CARD;
-    if (total >= 5) discount += PRICE_CARD;
-    return total * PRICE_CARD - discount;
-  }
 
   function renderSummary(items) {
     const container = document.getElementById('checkout-items');
@@ -219,21 +210,21 @@
     var select = document.getElementById('checkout-parcelas');
     if (!select) return;
     const items = getCart();
-    const cardSubtotal = getCardSubtotal(items);
     const quadrosTotal = getQuadrosTotal();
-    const subtotalForCoupon = getSubtotal(items) + quadrosTotal;
-    const couponDiscount = getCouponDiscount(subtotalForCoupon);
+    const subtotal = getSubtotal(items) + quadrosTotal;
+    const couponDiscount = getCouponDiscount(subtotal);
     const shipping = getShippingCost();
-    const cardTotal = Math.max(0, cardSubtotal + quadrosTotal - couponDiscount + shipping);
-    const minParcel = cardTotal * 0.2;
-    const maxParcelas = minParcel > 0 ? Math.min(12, Math.floor(cardTotal / minParcel)) : 1;
-    var numParcelas = Math.max(1, isNaN(maxParcelas) ? 1 : maxParcelas);
+    const baseTotal = Math.max(0, subtotal - couponDiscount + shipping);
+    // 20% de juros em todas as parcelas
+    const totalComJuros = baseTotal * 1.20;
+    // parcela mínima de R$ 15
+    const numParcelas = Math.min(12, Math.max(1, Math.floor(totalComJuros / 15)));
     select.replaceChildren();
     for (var n = 1; n <= numParcelas; n++) {
-      const valor = cardTotal / n;
+      const valor = totalComJuros / n;
       const opt = document.createElement('option');
       opt.value = n;
-      opt.textContent = n === 1 ? '1x de ' + formatPrice(valor) + ' *' : n + 'x de ' + formatPrice(valor) + ' *';
+      opt.textContent = n + 'x de ' + formatPrice(valor) + ' (c/ juros)';
       select.appendChild(opt);
     }
   }
@@ -1040,16 +1031,17 @@
         var expiryYear = expiryParts[1] ? '20' + expiryParts[1].trim() : '';
         var cardItems = getCart();
         var cardQuadros = getQuadrosCart();
-        var cardSubtotal = getCardSubtotal(cardItems);
         var cardQuadrosTotal = getQuadrosTotal();
-        var cardCouponDiscount = getCouponDiscount(getSubtotal(cardItems) + cardQuadrosTotal);
+        var cardBaseSubtotal = getSubtotal(cardItems) + cardQuadrosTotal;
+        var cardCouponDiscount = getCouponDiscount(cardBaseSubtotal);
         var cardShipping = getShippingCost();
-        var cardTotal = Math.max(0, cardSubtotal + cardQuadrosTotal - cardCouponDiscount + cardShipping);
+        var cardBaseTotal = Math.max(0, cardBaseSubtotal - cardCouponDiscount + cardShipping);
+        var cardTotal = cardBaseTotal * 1.20; // 20% de juros
         var parcelas = parseInt(document.getElementById('checkout-parcelas')?.value || '1', 10);
         var cardApiItems = [];
         cardItems.forEach(function (item, i) {
           var isFree = i === 2 || i === 4;
-          cardApiItems.push({ name: item.name, price: isFree ? 0 : PRICE_CARD, quantity: 1, id: item.id });
+          cardApiItems.push({ name: item.name, price: isFree ? 0 : getLightboxPrice(item), quantity: 1, id: item.id });
         });
         cardQuadros.forEach(function (q) {
           cardApiItems.push({ name: q.name, price: parsePrice(q.priceSale), quantity: 1, id: q.id });
