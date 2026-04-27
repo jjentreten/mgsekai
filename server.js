@@ -1,5 +1,5 @@
 /**
- * Backend Manga Sekai Shop
+ * Backend Animekai Shop
  * Serve arquivos estáticos, PIX (BrutalCash ativo / Marcha Pay legado) e Utmify (trackeamento)
  */
 require('dotenv').config();
@@ -199,7 +199,7 @@ app.post('/api/create-pix', async (req, res) => {
         return { name: item.title || item.name || 'Produto', quantity: item.quantity || 1, price: priceCents };
       })
     };
-    if (SITE_URL) payload.notify_url = SITE_URL + '/api/webhook-pagou';
+    if (SITE_URL && SITE_URL.startsWith('https://')) payload.notify_url = SITE_URL + '/api/webhook-pagou';
     try {
       const response = await fetch(PAGOU_BASE_URL + '/v2/transactions', {
         method: 'POST',
@@ -270,7 +270,7 @@ app.post('/api/create-pix', async (req, res) => {
       }),
       amount: amountCentavos,
       postback_url: SITE_URL ? SITE_URL + '/api/webhook-brutalcash' : undefined,
-      metadata: { provider_name: 'Manga Sekai' }
+      metadata: { provider_name: 'Animekai' }
     };
     try {
       const response = await fetch(BRUTALCASH_CREATE_URL, {
@@ -666,7 +666,7 @@ function startPolling() {
 }
 
 app.listen(PORT, () => {
-  console.log('Manga Sekai Shop rodando em http://localhost:' + PORT);
+  console.log('Animekai Shop rodando em http://localhost:' + PORT);
   const usePagouStartup = PIX_PROVIDER === 'pagou' && !!PAGOU_API_KEY;
   const useBrutal = !usePagouStartup && (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
   const useMarcha = !usePagouStartup && PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;

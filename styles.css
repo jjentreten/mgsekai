@@ -7,7 +7,7 @@ img { max-width: 100%; height: auto; display: block; }
 .page-width { max-width: 120rem; margin: 0 auto; padding: 0 1.6rem; }
 
 /* Ticker */
-.announcement-bar { background: #b71c1c; overflow: hidden; border-bottom: 1px solid rgba(0,0,0,0.15); }
+.announcement-bar { background: #000; overflow: hidden; border-bottom: 1px solid rgba(0,0,0,0.15); }
 .horizontal-ticker { overflow: hidden; white-space: nowrap; padding: 0.8rem 0; }
 .horizontal-ticker__track { display: inline-flex; animation: ticker-scroll 25s linear infinite; gap: 4rem; }
 .horizontal-ticker__item { display: inline-block; font-size: 1.2rem; font-weight: 700; text-transform: uppercase; white-space: nowrap; color: #fff; }
@@ -3489,37 +3489,37 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .popup-expired__btn--refuse:hover { background: rgba(255,255,255,0.05); }
 
 /* Loading inline - frete no bloco Método de envio */
-.shipping-loading { padding: 2rem; color: rgba(255,255,255,0.9); font-size: 1.4rem; }
+.shipping-loading { padding: 2rem; color: #555; font-size: 1.4rem; }
 .shipping-loading[hidden] { display: none !important; }
 
 /* Popup Upsell - oferta especial ao adicionar 1 lightbox */
 .upsell-popup { position: fixed; inset: 0; z-index: 10004; display: flex; align-items: center; justify-content: center; padding: 1.6rem; opacity: 0; visibility: hidden; transition: opacity 0.3s, visibility 0.3s; }
 .upsell-popup.is-open { opacity: 1; visibility: visible; }
 .upsell-popup__backdrop { position: absolute; inset: 0; background: rgba(0,0,0,0.75); backdrop-filter: blur(4px); cursor: pointer; }
-.upsell-popup__box { position: relative; width: 100%; max-width: 44rem; background: linear-gradient(180deg, #0d1117 0%, #161b22 100%); border: 1px solid rgba(66,165,245,0.25); border-radius: 1.2rem; box-shadow: 0 24px 48px rgba(0,0,0,0.5); overflow: hidden; }
-.upsell-popup__close { position: absolute; top: 1rem; right: 1rem; z-index: 2; width: 3.2rem; height: 3.2rem; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.1); color: #fff; border: none; border-radius: 50%; cursor: pointer; transition: background 0.2s; }
-.upsell-popup__close:hover { background: rgba(255,255,255,0.2); }
+.upsell-popup__box { position: relative; width: 100%; max-width: 44rem; background: #fff; border: 1px solid rgba(0,0,0,0.1); border-radius: 1.2rem; box-shadow: 0 24px 48px rgba(0,0,0,0.18); overflow: hidden; }
+.upsell-popup__close { position: absolute; top: 1rem; right: 1rem; z-index: 2; width: 3.2rem; height: 3.2rem; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.07); color: #333; border: none; border-radius: 50%; cursor: pointer; transition: background 0.2s; }
+.upsell-popup__close:hover { background: rgba(0,0,0,0.14); }
 .upsell-popup__header { padding: 2rem 2rem 0; text-align: center; }
-.upsell-popup__title { margin: 0 0 0.6rem; font-size: 1.75rem; font-weight: 700; color: #fff; font-family: 'Quantico', Arial, sans-serif; }
-.upsell-popup__subtitle { margin: 0 0 1rem; font-size: 1.15rem; color: rgba(255,255,255,0.85); line-height: 1.4; }
-.upsell-popup__timer-label { margin: 0 0 1.2rem; font-size: 1.2rem; color: rgba(255,255,255,0.9); }
+.upsell-popup__title { margin: 0 0 0.6rem; font-size: 1.75rem; font-weight: 700; color: #111; font-family: 'Quantico', Arial, sans-serif; }
+.upsell-popup__subtitle { margin: 0 0 1rem; font-size: 1.15rem; color: #555; line-height: 1.4; }
+.upsell-popup__timer-label { margin: 0 0 1.2rem; font-size: 1.2rem; color: #444; }
 .upsell-popup__timer-label strong { color: #e53935; font-size: 1.4rem; min-width: 3.5em; display: inline-block; }
 .upsell-popup__product { display: flex; gap: 1.5rem; padding: 0 2rem 1.5rem; align-items: center; }
-.upsell-popup__img { width: 140px; height: 140px; object-fit: cover; border-radius: 0.8rem; border: 2px solid rgba(66,165,245,0.3); flex-shrink: 0; }
+.upsell-popup__img { width: 140px; height: 140px; object-fit: cover; border-radius: 0.8rem; border: 2px solid rgba(0,0,0,0.1); flex-shrink: 0; }
 .upsell-popup__product-info { flex: 1; min-width: 0; }
-.upsell-popup__product-name { margin: 0 0 0.5rem; font-size: 1.4rem; font-weight: 700; color: #fff; }
-.upsell-popup__price { margin: 0 0 0.25rem; font-size: 1.25rem; color: rgba(255,255,255,0.9); }
-.upsell-popup__price s { color: rgba(255,255,255,0.5); margin-right: 0.5rem; }
+.upsell-popup__product-name { margin: 0 0 0.5rem; font-size: 1.4rem; font-weight: 700; color: #111; }
+.upsell-popup__price { margin: 0 0 0.25rem; font-size: 1.25rem; color: #333; }
+.upsell-popup__price s { color: #aaa; margin-right: 0.5rem; }
 .upsell-popup__price-sale { color: #e53935; font-weight: 700; }
-.upsell-popup__badge { margin: 0 0 0.75rem; font-size: 1rem; color: #4caf50; font-weight: 600; }
-.upsell-popup__frame-label { display: block; font-size: 1rem; color: rgba(255,255,255,0.8); margin-bottom: 0.25rem; }
-.upsell-popup__frame-select { width: 100%; max-width: 12rem; padding: 0.5rem 0.75rem; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 0.5rem; color: #fff; font-size: 1rem; }
-.upsell-popup__frame-select option { background: #161b22; color: #fff; }
+.upsell-popup__badge { margin: 0 0 0.75rem; font-size: 1rem; color: #2e7d32; font-weight: 600; }
+.upsell-popup__frame-label { display: block; font-size: 1rem; color: #555; margin-bottom: 0.25rem; }
+.upsell-popup__frame-select { width: 100%; max-width: 12rem; padding: 0.5rem 0.75rem; background: #f5f5f5; border: 1px solid rgba(0,0,0,0.18); border-radius: 0.5rem; color: #111; font-size: 1rem; }
+.upsell-popup__frame-select option { background: #fff; color: #111; }
 .upsell-popup__actions { padding: 1.2rem 2rem 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
 .upsell-popup__btn-accept { width: 100%; padding: 1rem 1.5rem; font-size: 1.2rem; font-weight: 700; font-family: 'Quantico', Arial, sans-serif; text-transform: uppercase; letter-spacing: 0.03em; background: linear-gradient(135deg, #e53935, #c0392b); color: #fff; border: none; border-radius: 0.6rem; cursor: pointer; transition: opacity 0.2s, transform 0.15s; }
 .upsell-popup__btn-accept:hover { opacity: 0.95; transform: scale(1.01); }
-.upsell-popup__btn-decline { width: 100%; padding: 0.9rem; font-size: 1.05rem; background: transparent; color: rgba(255,255,255,0.7); border: 1px solid rgba(255,255,255,0.25); border-radius: 0.6rem; cursor: pointer; transition: background 0.2s; }
-.upsell-popup__btn-decline:hover { background: rgba(255,255,255,0.06); }
+.upsell-popup__btn-decline { width: 100%; padding: 0.9rem; font-size: 1.05rem; background: transparent; color: #777; border: 1px solid rgba(0,0,0,0.2); border-radius: 0.6rem; cursor: pointer; transition: background 0.2s; }
+.upsell-popup__btn-decline:hover { background: rgba(0,0,0,0.04); }
 @media (max-width: 549px) {
   .upsell-popup__product { flex-direction: column; text-align: center; }
   .upsell-popup__frame-select { max-width: none; }
