@@ -18,6 +18,11 @@ const BRUTALCASH_SECRET_KEY = (process.env.BRUTALCASH_SECRET_KEY || '').trim();
 const BRUTALCASH_CREATE_URL = 'https://api.brutalcash.com/v1/payment-transaction/create';
 const BRUTALCASH_GET_URL = 'https://api.brutalcash.com/v1/payment-transaction';
 
+// Pagou (principal – ativar com PIX_PROVIDER=pagou)
+const PAGOU_API_KEY = (process.env.PAGOU_API_KEY || '').trim();
+const PAGOU_ENVIRONMENT = (process.env.PAGOU_ENVIRONMENT || 'production').toLowerCase();
+const PAGOU_BASE_URL = PAGOU_ENVIRONMENT === 'sandbox' ? 'https://api-sandbox.pagou.ai' : 'https://api.pagou.ai';
+
 // Marcha Pay (legado – desativado por padrão; usar PIX_PROVIDER=marchapay para ativar)
 const MARCHABB_URL = 'https://api.marchabb.com/v1/transactions';
 const MARCHABB_GET_URL = 'https://api.marchabb.com/v1/transactions';
@@ -171,8 +176,77 @@ app.post('/api/create-pix', async (req, res) => {
   }
   const phoneFixed = '11999999999';
 
-  const useBrutalCash = (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
-  const useMarchaPay = PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
+  const usePagou = PIX_PROVIDER === 'pagou' && !!PAGOU_API_KEY;
+  const useBrutalCash = !usePagou && (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
+  const useMarchaPay = !usePagou && PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
+
+  if (usePagou) {
+    // --- Pagou PIX ---
+    const externalRef = 'ms-' + Date.now();
+    const payload = {
+      method: 'pix',
+      amount: amountCentavos,
+      currency: 'BRL',
+      external_ref: externalRef,
+      buyer: {
+        name: customer.name.trim(),
+        email: customer.email.trim(),
+        document: { type: 'CPF', number: docNumber }
+      },
+      products: items.map((item) => {
+        const price = item.unitPrice ?? item.price ?? 0;
+        const priceCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+        return { name: item.title || item.name || 'Produto', quantity: item.quantity || 1, price: priceCents };
+      })
+    };
+    if (SITE_URL) payload.notify_url = SITE_URL + '/api/webhook-pagou';
+    try {
+      const response = await fetch(PAGOU_BASE_URL + '/v2/transactions', {
+        method: 'POST',
+        headers: { 'Authorization': 'Bearer ' + PAGOU_API_KEY, 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const raw = await response.json();
+      const data = raw.data || raw;
+      if (!response.ok || !data.id) {
+        const errMsg = (raw.errors && JSON.stringify(raw.errors)) || raw.detail || raw.message || raw.error || 'Erro ao criar PIX';
+        console.error('Pagou PIX erro:', response.status, JSON.stringify(raw));
+        return res.status(response.ok ? 500 : response.status).json({ success: false, error: String(errMsg) });
+      }
+      const qrcode = data.pix?.qr_code || data.pix?.copy_paste || '';
+      const transactionId = data.id;
+      if (!qrcode) return res.status(500).json({ success: false, error: 'Resposta Pagou sem código PIX' });
+      const createdAt = toUtcDateTime(new Date());
+      if (UTMIFY_TOKEN && transactionId) {
+        const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '0.0.0.0';
+        const ip = clientIp.replace(/^::ffff:/, '');
+        const productsForUtmify = items.map((item) => {
+          const price = item.unitPrice ?? item.price ?? 0;
+          const priceInCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+          return { id: item.id || item.externalRef, name: item.name || item.title || 'Produto', quantity: item.quantity || 1, priceInCents };
+        });
+        const utmifyPayload = buildUtmifyPayload({
+          orderId: String(transactionId),
+          status: 'waiting_payment',
+          createdAt,
+          approvedDate: null,
+          refundedAt: null,
+          customer: { name: customer.name.trim(), email: customer.email.trim(), phone: phoneFixed, document: docNumber, country: 'BR', ip },
+          products: productsForUtmify,
+          trackingParameters: trackingParameters || {},
+          totalPriceInCents: amountCentavos
+        });
+        await sendToUtmify(utmifyPayload);
+        const pending = readPendingOrders();
+        pending.push({ transactionId: String(transactionId), createdAt, utmifyPayload, provider: 'pagou' });
+        writePendingOrders(pending);
+      }
+      return res.json({ success: true, transactionId, qrcode, amount: amountCentavos });
+    } catch (err) {
+      console.error('Erro Pagou PIX:', err);
+      return res.status(500).json({ success: false, error: err.message || 'Erro ao conectar com o gateway de pagamento' });
+    }
+  }
 
   if (useBrutalCash) {
     // --- BrutalCash ---
@@ -333,7 +407,7 @@ app.post('/api/create-pix', async (req, res) => {
 
   return res.status(500).json({
     success: false,
-    error: 'Nenhum gateway PIX configurado. Defina PIX_PROVIDER=brutalcash e BRUTALCASH_PUBLIC_KEY/SECRET_KEY no .env (ou PIX_PROVIDER=marchapay com MARCHABB_*).'
+    error: 'Nenhum gateway PIX configurado. Defina PIX_PROVIDER=pagou e PAGOU_API_KEY no .env (ou PIX_PROVIDER=brutalcash com BRUTALCASH_*).'
   });
 });
 
@@ -360,6 +434,31 @@ app.post('/api/webhook-brutalcash', (req, res) => {
   res.status(200).send('OK');
 });
 
+// POST /api/webhook-pagou - Recebe postbacks da Pagou (PIX e cartão)
+app.post('/api/webhook-pagou', (req, res) => {
+  const body = req.body;
+  const event = body.event || '';
+  const data = body.data || {};
+  const id = data.id || body.id;
+  const status = data.status || body.status || '';
+  console.log('Webhook Pagou:', event, id, status);
+  if ((event === 'transaction.paid' || status === 'paid') && id) {
+    const pending = readPendingOrders();
+    const idx = pending.findIndex((p) => String(p.transactionId) === String(id) && p.provider === 'pagou');
+    if (idx !== -1) {
+      const row = pending[idx];
+      const approvedDate = data.paid_at ? toUtcDateTime(new Date(data.paid_at)) : toUtcDateTime(new Date());
+      const payload = { ...row.utmifyPayload, status: 'paid', approvedDate };
+      sendToUtmify(payload).then(() => {
+        pending.splice(idx, 1);
+        writePendingOrders(pending);
+        console.log('Utmify atualizado (webhook Pagou): pedido', id, 'pago');
+      });
+    }
+  }
+  res.status(200).json({ received: true });
+});
+
 // POST /api/webhook-pix - Recebe postbacks da Marcha Pay (legado; só usado com PIX_PROVIDER=marchapay)
 app.post('/api/webhook-pix', (req, res) => {
   const body = req.body;
@@ -372,8 +471,24 @@ app.get('/api/pix-status/:transactionId', async (req, res) => {
   const { transactionId } = req.params;
   if (!transactionId) return res.status(400).json({ status: 'unknown' });
 
-  const useBrutalCash = (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
-  const useMarchaPay = PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
+  const usePagou = PIX_PROVIDER === 'pagou' && !!PAGOU_API_KEY;
+  const useBrutalCash = !usePagou && (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
+  const useMarchaPay = !usePagou && PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
+
+  if (usePagou) {
+    try {
+      const response = await fetch(PAGOU_BASE_URL + '/v2/transactions/' + encodeURIComponent(transactionId), {
+        method: 'GET',
+        headers: { 'Authorization': 'Bearer ' + PAGOU_API_KEY, 'Accept': 'application/json' }
+      });
+      const raw = response.ok ? await response.json() : null;
+      const status = raw?.data?.status || raw?.status || 'unknown';
+      return res.json({ status: status === 'paid' ? 'paid' : 'pending' });
+    } catch (err) {
+      console.error('pix-status Pagou:', err.message);
+      return res.status(500).json({ status: 'unknown' });
+    }
+  }
 
   if (useBrutalCash) {
     try {
@@ -409,6 +524,93 @@ app.get('/api/pix-status/:transactionId', async (req, res) => {
   }
 
   res.json({ status: 'unknown' });
+});
+
+// POST /api/create-card - Cria transação de cartão de crédito (Pagou)
+app.post('/api/create-card', async (req, res) => {
+  if (PIX_PROVIDER !== 'pagou' || !PAGOU_API_KEY) {
+    return res.status(400).json({ success: false, error: 'Gateway de cartão não configurado. Defina PIX_PROVIDER=pagou e PAGOU_API_KEY.' });
+  }
+  const { amount, installments, items, customer, card, trackingParameters } = req.body;
+  let amountCentavos = typeof amount === 'number' ? Math.round(amount) : 0;
+  if (amountCentavos < 1) return res.status(400).json({ success: false, error: 'Valor inválido' });
+  if (!customer || !customer.name || !customer.email) return res.status(400).json({ success: false, error: 'Cliente obrigatório' });
+  if (!card || !card.number || !card.expiry_month || !card.expiry_year || !card.cvv || !card.holder_name) {
+    return res.status(400).json({ success: false, error: 'Dados do cartão incompletos' });
+  }
+  const docNumber = (customer.document?.number || '').replace(/\D/g, '');
+  const externalRef = 'ms-' + Date.now();
+  const payload = {
+    method: 'credit_card',
+    amount: amountCentavos,
+    installments: installments || 1,
+    external_ref: externalRef,
+    buyer: {
+      name: customer.name.trim(),
+      email: customer.email.trim(),
+      document: { type: 'CPF', number: docNumber }
+    },
+    card: {
+      number: card.number.replace(/\s/g, ''),
+      expiry_month: card.expiry_month,
+      expiry_year: card.expiry_year,
+      cvv: card.cvv,
+      holder_name: card.holder_name
+    },
+    products: (items || []).map((item) => {
+      const price = item.unitPrice ?? item.price ?? 0;
+      const priceCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+      return { name: item.title || item.name || 'Produto', quantity: item.quantity || 1, price: priceCents };
+    })
+  };
+  if (SITE_URL) payload.notify_url = SITE_URL + '/api/webhook-pagou';
+  try {
+    const response = await fetch(PAGOU_BASE_URL + '/v2/transactions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + PAGOU_API_KEY, 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const raw = await response.json();
+    const data = raw.data || raw;
+    if (!response.ok || !data.id) {
+      const errMsg = (raw.errors && JSON.stringify(raw.errors)) || raw.detail || raw.message || raw.error || 'Erro ao processar cartão';
+      console.error('Pagou cartão erro:', response.status, JSON.stringify(raw));
+      return res.status(response.ok ? 500 : response.status).json({ success: false, error: String(errMsg) });
+    }
+    const txStatus = data.status || '';
+    const createdAt = toUtcDateTime(new Date());
+    if (UTMIFY_TOKEN && data.id) {
+      const clientIp = (req.headers['x-forwarded-for'] || '').split(',')[0].trim() || req.socket?.remoteAddress || req.ip || '0.0.0.0';
+      const ip = clientIp.replace(/^::ffff:/, '');
+      const productsForUtmify = (items || []).map((item) => {
+        const price = item.unitPrice ?? item.price ?? 0;
+        const priceInCents = price < 100 ? Math.round(Number(price) * 100) : Math.round(Number(price));
+        return { id: item.id, name: item.name || item.title || 'Produto', quantity: item.quantity || 1, priceInCents };
+      });
+      const utmifyPayload = buildUtmifyPayload({
+        orderId: String(data.id),
+        status: txStatus === 'paid' ? 'paid' : 'waiting_payment',
+        createdAt,
+        approvedDate: txStatus === 'paid' ? createdAt : null,
+        refundedAt: null,
+        customer: { name: customer.name.trim(), email: customer.email.trim(), phone: customer.phone || '11999999999', document: docNumber, country: 'BR', ip },
+        products: productsForUtmify,
+        trackingParameters: trackingParameters || {},
+        totalPriceInCents: amountCentavos
+      });
+      utmifyPayload.paymentMethod = 'credit_card';
+      await sendToUtmify(utmifyPayload);
+      if (txStatus !== 'paid') {
+        const pending = readPendingOrders();
+        pending.push({ transactionId: String(data.id), createdAt, utmifyPayload, provider: 'pagou' });
+        writePendingOrders(pending);
+      }
+    }
+    return res.json({ success: true, transactionId: data.id, status: txStatus, amount: amountCentavos });
+  } catch (err) {
+    console.error('Erro Pagou cartão:', err);
+    return res.status(500).json({ success: false, error: err.message || 'Erro ao processar cartão' });
+  }
 });
 
 // Fallback: servir index.html para SPA se necessário
@@ -465,15 +667,18 @@ function startPolling() {
 
 app.listen(PORT, () => {
   console.log('Manga Sekai Shop rodando em http://localhost:' + PORT);
-  const useBrutal = (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
-  const useMarcha = PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
-  if (useBrutal) {
+  const usePagouStartup = PIX_PROVIDER === 'pagou' && !!PAGOU_API_KEY;
+  const useBrutal = !usePagouStartup && (PIX_PROVIDER === 'brutalcash' || PIX_PROVIDER !== 'marchapay') && BRUTALCASH_PUBLIC_KEY && BRUTALCASH_SECRET_KEY;
+  const useMarcha = !usePagouStartup && PIX_PROVIDER === 'marchapay' && PUBLIC_KEY && SECRET_KEY;
+  if (usePagouStartup) {
+    console.log('PIX/Cartão: Pagou ativo.');
+  } else if (useBrutal) {
     console.log('PIX: BrutalCash ativo.');
   } else if (useMarcha) {
     console.log('PIX: Marcha Pay ativo (legado).');
     if (UTMIFY_TOKEN) startPolling();
   } else {
-    console.warn('AVISO: Nenhum gateway PIX ativo. Configure PIX_PROVIDER=brutalcash e BRUTALCASH_* no .env (ou marchapay com MARCHABB_*).');
+    console.warn('AVISO: Nenhum gateway PIX ativo. Configure PIX_PROVIDER=pagou e PAGOU_API_KEY no .env (ou PIX_PROVIDER=brutalcash com BRUTALCASH_*).');
   }
   if (UTMIFY_TOKEN) {
     console.log('Utmify: token configurado - pedidos serão enviados ao painel.');

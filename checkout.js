@@ -956,7 +956,6 @@
         var couponDiscount = getCouponDiscount(subtotalComQuadros);
         var shipping = getShippingCost();
         var total = subtotalComQuadros - couponDiscount + shipping;
-        var complement = formShipping?.querySelector('input[name="complement"]')?.value?.trim() || '';
         var apiItems = [];
         items.forEach(function (item, i) {
           var isFree = i === 2 || i === 4;
@@ -991,6 +990,7 @@
             if (!trackingParameters.utm_term && parsed.utm_term) trackingParameters.utm_term = parsed.utm_term;
           }
         } catch (_) {}
+        var complement = formShipping?.querySelector('input[name="complement"]')?.value?.trim() || '';
         var shippingForApi = null;
         if (address && addressNumber && neighborhood && city && state && postalCode) {
           shippingForApi = {
@@ -1035,7 +1035,69 @@
       }
 
       if (payment === 'card') {
-        showCardProcessingModal();
+        var expiryParts = cardExpiry.split('/');
+        var expiryMonth = (expiryParts[0] || '').padStart(2, '0');
+        var expiryYear = expiryParts[1] ? '20' + expiryParts[1].trim() : '';
+        var cardItems = getCart();
+        var cardQuadros = getQuadrosCart();
+        var cardSubtotal = getCardSubtotal(cardItems);
+        var cardQuadrosTotal = getQuadrosTotal();
+        var cardCouponDiscount = getCouponDiscount(getSubtotal(cardItems) + cardQuadrosTotal);
+        var cardShipping = getShippingCost();
+        var cardTotal = Math.max(0, cardSubtotal + cardQuadrosTotal - cardCouponDiscount + cardShipping);
+        var parcelas = parseInt(document.getElementById('checkout-parcelas')?.value || '1', 10);
+        var cardApiItems = [];
+        cardItems.forEach(function (item, i) {
+          var isFree = i === 2 || i === 4;
+          cardApiItems.push({ name: item.name, price: isFree ? 0 : PRICE_CARD, quantity: 1, id: item.id });
+        });
+        cardQuadros.forEach(function (q) {
+          cardApiItems.push({ name: q.name, price: parsePrice(q.priceSale), quantity: 1, id: q.id });
+        });
+        var cardPhoneForApi = phoneRawSubmit.length >= 10 ? phoneRawSubmit : '11999999999';
+        if (cardPhoneForApi.startsWith('55') && cardPhoneForApi.length > 11) cardPhoneForApi = cardPhoneForApi.slice(2);
+        var cardModal = document.getElementById('checkout-modal');
+        var cardLoading = document.getElementById('checkout-modal-loading');
+        var cardError = document.getElementById('checkout-modal-error');
+        if (cardModal) { cardModal.setAttribute('aria-hidden', 'false'); cardModal.classList.add('checkout-modal--open'); }
+        if (cardLoading) cardLoading.style.display = '';
+        if (cardError) cardError.style.display = 'none';
+        fetch('/api/create-card', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: Math.round(cardTotal * 100),
+            installments: parcelas || 1,
+            items: cardApiItems,
+            customer: {
+              name: firstName,
+              email: email,
+              phone: cardPhoneForApi,
+              document: { number: (cpf || '').replace(/\D/g, ''), type: 'cpf' }
+            },
+            card: {
+              number: cardNumber,
+              expiry_month: expiryMonth,
+              expiry_year: expiryYear,
+              cvv: cardCvv,
+              holder_name: cardName.toUpperCase()
+            }
+          })
+        })
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (cardLoading) cardLoading.style.display = 'none';
+          if (!data.success || data.status === 'declined' || data.status === 'failed') {
+            if (cardError) cardError.style.display = '';
+            return;
+          }
+          try { localStorage.removeItem(STORAGE_KEY); localStorage.removeItem(STORAGE_KEY_QUADROS); } catch (_) {}
+          window.location.href = 'obrigado.html?email=' + encodeURIComponent(email);
+        })
+        .catch(function () {
+          if (cardLoading) cardLoading.style.display = 'none';
+          if (cardError) cardError.style.display = '';
+        });
         return;
       }
 
@@ -1043,28 +1105,6 @@
       localStorage.removeItem(STORAGE_KEY);
       window.location.href = 'index.html';
     });
-
-    function showCardProcessingModal() {
-      const modal = document.getElementById('checkout-modal');
-      const loading = document.getElementById('checkout-modal-loading');
-      const error = document.getElementById('checkout-modal-error');
-      const msgSecondary = document.getElementById('checkout-modal-msg-secondary');
-      if (!modal || !loading || !error) return;
-      modal.setAttribute('aria-hidden', 'false');
-      modal.classList.add('checkout-modal--open');
-      loading.style.display = '';
-      error.style.display = 'none';
-      msgSecondary.style.opacity = '0';
-
-      setTimeout(() => {
-        if (msgSecondary) msgSecondary.style.opacity = '1';
-      }, 2200);
-
-      setTimeout(() => {
-        loading.style.display = 'none';
-        error.style.display = '';
-      }, 4500);
-    }
 
     function closeCardModal() {
       const modal = document.getElementById('checkout-modal');
