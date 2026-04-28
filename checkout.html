@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>Finalizar compra | Animakai</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -157,14 +157,14 @@
                   <h2 class="step-checkout__card-title">DADOS PESSOAIS</h2>
                   <p class="step-checkout__card-desc">Pedimos apenas as informações essenciais para concluir sua compra com segurança.</p>
                 </header>
-                <form id="formCustomer" class="checkout-form__customer-form" novalidate autocomplete="off">
+                <form id="formCustomer" class="checkout-form__customer-form" novalidate autocomplete="on">
                   <div id="customerFields" data-checkout-container="customer">
                     <div class="step-checkout__fields">
                       <div class="checkout-form__field-block checkout-form__field-block--name">
                         <label class="checkout-form__field" for="checkout-first-name">
                           <span class="checkout-form__label">Nome completo</span>
                           <span class="checkout-form__input-wrap checkout-form__input-wrap--placeholder">
-                            <input type="text" id="checkout-first-name" name="first_name" required autocomplete="off" aria-label="Nome completo">
+                            <input type="text" id="checkout-first-name" name="first_name" required autocomplete="name" aria-label="Nome completo">
                             <span class="checkout-form__fake-placeholder" id="checkout-first-name-placeholder" aria-hidden="true">Ex: Mariana Cardoso Silva</span>
                           </span>
                           <span class="checkout-form__error" data-field="firstName"></span>

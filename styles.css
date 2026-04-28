@@ -2750,6 +2750,7 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
   width: 100%;
   max-width: 42rem;
   height: 100vh;
+  height: 100dvh;
   background: #fff;
   z-index: 10003;
   transform: translateX(100%);
@@ -3083,6 +3084,7 @@ body.offer-countdown-visible .header-wrapper { top: 2.9rem; }
 .cart-drawer__footer {
   flex-shrink: 0;
   padding: 1.6rem 2rem 2rem;
+  padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid rgba(0, 0, 0, 0.08);
   background: #f8f8f8;
 }

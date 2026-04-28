@@ -538,6 +538,9 @@
 
   var cepModalShownAt = 0;
   var phoneSnapshotBeforeCep = '';
+  // Snapshot dos dados do passo 1 salvo ao clicar em Continuar,
+  // usado como fallback caso o browser limpe os inputs ocultos
+  var step1Snapshot = { firstName: '', email: '', cpf: '', phone: '' };
 
   function protectPhoneAfterCep() {
     var phoneEl = document.getElementById('checkout-phone');
@@ -838,6 +841,12 @@
 
     document.getElementById('btnStep1Continue')?.addEventListener('click', function () {
       if (validateStep1(formCustomer)) {
+        step1Snapshot = {
+          firstName: formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || '',
+          email: formCustomer?.querySelector('input[name="email"]')?.value?.trim() || '',
+          cpf: formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || '',
+          phone: document.getElementById('checkout-phone')?.value?.trim() || ''
+        };
         updateStepPersonalSummary();
         goToStep(2);
       }
@@ -891,12 +900,11 @@
       }
       clearErrors();
 
-      var email = formCustomer?.querySelector('input[name="email"]')?.value?.trim() || '';
+      var email = formCustomer?.querySelector('input[name="email"]')?.value?.trim() || step1Snapshot.email;
+      var firstName = formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || step1Snapshot.firstName;
+      var cpf = formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || step1Snapshot.cpf;
       var phoneElSubmit = document.getElementById('checkout-phone');
-      var phoneRawSubmit = phoneElSubmit ? digitsOnly(phoneElSubmit.value) : '';
-      var phone = phoneElSubmit ? phoneElSubmit.value.trim() : '';
-      var firstName = formCustomer?.querySelector('input[name="first_name"]')?.value?.trim() || '';
-      var cpf = formCustomer?.querySelector('input[name="cpf"]')?.value?.trim() || '';
+      var phoneRawSubmit = phoneElSubmit ? digitsOnly(phoneElSubmit.value) : digitsOnly(step1Snapshot.phone);
       var postalCode = formShipping?.querySelector('input[name="postalCode"]')?.value?.trim() || '';
       var address = formShipping?.querySelector('input[name="address"]')?.value?.trim() || '';
       var city = formShipping?.querySelector('input[name="city"]')?.value?.trim() || '';
